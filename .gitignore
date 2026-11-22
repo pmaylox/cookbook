@@ -1,0 +1,24 @@
+# Android / Gradle
+.gradle/
+.idea/
+**/build/
+local.properties
+*.iml
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Python and tests
+__pycache__/
+.pytest_cache/
+*.pyc
+tests/smoke-test-backup.json
+tests/photo-backup-test.json
+tests/photo-missing-test.json
+tests/invalid-backup.json
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
