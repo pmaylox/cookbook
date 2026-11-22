@@ -33,3 +33,12 @@ Completed in the local test environment:
 - Original full-resolution camera files are not preserved by the app; it stores compressed copies.
 - Deleting a recipe does not delete its already-copied files from user-visible Pictures.
 - Native camera/Android build, installed APK and full MediaStore behavior are unverified.
+
+## Alpha 0.2.4 — launcher branding verification pending
+
+The Concept 2 launcher icon resources are included in this revision. The recipe code is inherited unchanged from Alpha 0.2.3. Test on an actual Android device:
+
+- [ ] Install/update 0.2.4-alpha from a newly built artifact, retaining a full backup.
+- [ ] Check app icon on Samsung launcher, app drawer, Settings → Apps, and recent tasks.
+- [ ] Confirm adaptive circle/squircle cropping doesn't cut the book title or braces.
+- [ ] Confirm camera scan, saved photos, and JSON export continue to function.

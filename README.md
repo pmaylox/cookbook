@@ -1,6 +1,17 @@
-# My Cookbook — Alpha 0.2.3: saved recipe photos
+# My Cookbook — Alpha 0.2.4: branded launcher icon
 
 **Red Dirt Code™ • Product #2**
+
+## Alpha 0.2.4 — app icon update
+
+- Official launcher art: selected **Concept 2**, combining the Red Dirt Code sunrise / curly braces and Cookbook lettering.
+- Legacy square and circular icon sizes in `app/src/main/res/mipmap-*`.
+- Android 8+ adaptive icon layers in `mipmap-anydpi-v26`, with a clay red background and safe-area centered foreground.
+- The artwork source lives at `branding/cookbook-icon-concept-2.webp`.
+- Native versionCode updated to 204, versionName to `0.2.4-alpha`.
+- No changes to recipe, scan, backup, or photo storage behavior.
+- **Device installation and visual check are still required.**
+
 
 This update builds on the user's Alpha 0.2.2 photo-scanning app. The original uploaded Claude HTML is preserved unchanged as `archive/original-claude-upload.html`.
 
@@ -36,7 +47,7 @@ This update builds on the user's Alpha 0.2.2 photo-scanning app. The original up
 ## Files
 
 - `my-cookbook-alpha-0.2.3.html`: full browser HTML.
-- `app/`, with Gradle config at repo root: native Android WebView container, ML Kit OCR integration and MediaStore photo copies. Android application ID stays `io.reddirtcode.cookbook`, version name `0.2.3-alpha`.
+- `app/`, with Gradle config at repo root: native Android WebView container, ML Kit OCR integration and MediaStore photo copies. Android application ID stays `io.reddirtcode.cookbook`, version name `0.2.4-alpha`.
 - `tests/`: existing browser regressions and new photo storage/restore integration suite.
 - `TEST_RESULTS.md`: automated tests and remaining device validation.
 - `archive/original-claude-upload.html`: exact original upload, unchanged.
