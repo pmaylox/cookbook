@@ -1,0 +1,32 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'io.reddirtcode.cookbook'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'io.reddirtcode.cookbook'
+        minSdk 26
+        targetSdk 35
+        versionCode 203
+        versionName '0.2.3-alpha'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildTypes {
+        debug {}
+        release {
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.18.0'
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'com.google.mlkit:text-recognition:16.0.1'
+}

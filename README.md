@@ -31,7 +31,7 @@ This update builds on the user's Alpha 0.2.2 photo-scanning app. The original up
 - Photos copied to Pictures remain in that folder even if you delete a recipe; the app does not automatically remove user-visible copies.
 - Browser HTML launched from `file://` or a Downloads preview may lack working IndexedDB. Use a normal secure browser origin or the compiled Android app for real photo persistence.
 - Android photo-folder writes, camera capture, MediaStore visibility and actual on-device ML Kit recognition are **not yet verified on a physical device**. The Android project is source code, not an APK.
-- The original 180-entry catalog is unchanged and may contain original Gmail thread IDs. Do not publish source openly without reviewing that metadata. Use a **private** GitHub repository for the build pipeline.
+- The original 180-entry catalog is unchanged and may contain original Gmail thread IDs. The catalog contains Gmail thread identifiers. The repository owner has explicitly chosen **public** visibility; never add credentials, personal backups, or private photos.
 
 ## Files
 
@@ -43,6 +43,6 @@ This update builds on the user's Alpha 0.2.2 photo-scanning app. The original up
 
 ## Build Android APK
 
-Install Android Studio with Android SDK 36 and JDK 17, open the repository root, sync Gradle, then select **Build → Build APK(s)**. On success, the debug APK is `app/build/outputs/apk/debug/app-debug.apk`. Alternatively, copy this project into a **private** GitHub repository and run the provided Actions workflow. Neither path was executed in this environment.
+Install Android Studio with Android SDK 36 and JDK 17, open the repository root, sync Gradle, then select **Build → Build APK(s)**. On success, the debug APK is `app/build/outputs/apk/debug/app-debug.apk`. Alternatively, copy this project into the GitHub repository and run the provided Actions workflow. Neither path was executed in this environment.
 
 **Before installing on an existing device:** export the current cookbook's JSON backup. The same Android application ID is retained, but HTML/browser installations and APK installations do not automatically share data.

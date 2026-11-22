@@ -13,6 +13,7 @@ local.properties
 __pycache__/
 .pytest_cache/
 *.pyc
+# Generated test output; script recreates these when run
 tests/smoke-test-backup.json
 tests/photo-backup-test.json
 tests/photo-missing-test.json
