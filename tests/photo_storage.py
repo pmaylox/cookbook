@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
-FILE=ROOT/'my-cookbook-alpha-0.2.3.html'
+FILE=ROOT/'my-cookbook-alpha-0.2.5.html'
 PHOTO=ROOT/'tests/test-recipe-card.png'
 passed=[]; errors=[]
 with sync_playwright() as pw:

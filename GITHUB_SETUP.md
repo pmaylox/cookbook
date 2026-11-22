@@ -2,7 +2,7 @@
 
 Repository: https://github.com/pmaylox/cookbook  
 Visibility: **Public** (approved by the repository owner)  
-Release: **Alpha 0.2.4** (source code, Android APK build pending)
+Release: **Alpha 0.2.5** (source code, Android APK build pending)
 
 The original catalog includes Gmail thread IDs as recipe references. Never commit login credentials, authentication tokens, exported private backups, or personal scanned recipe photos.
 

@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#9E3B1B">
+<meta name="description" content="My Cookbook — a private recipe collection with photo scanning from Red Dirt Code.">
+<title>My Cookbook Alpha 0.2.5 · Red Dirt Code</title>
+<style>
+:root{color-scheme:light;--bg:#f7f4ef;--paper:#fffdf9;--ink:#2b302c;--muted:#676e67;--line:#d7d9d2;--chip:#f0ece4;--accent:#9E3B1B;--accent-ink:#fff;--star:#c18a15;--shade:rgba(18,25,19,.56);--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--display:Georgia,'Times New Roman',serif;--tab-A:#607e3c;--tab-S:#b26a1e;--tab-M:#2f5e6e;--tab-D:#9c3d5a;--tab-K:#6a4e8c}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;color:var(--ink);background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.47}
+[hidden]{display:none!important}.wrap{width:min(1200px,calc(100% - 34px));margin:0 auto;padding:22px 0 44px}.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;padding:20px 0 16px;border-bottom:3px solid var(--accent)}
+.top>div:first-child{flex:1 1 320px}.top h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);font-weight:400;letter-spacing:-.03em;line-height:1.05;margin:0 0 12px}.sub{color:var(--muted);margin:0}.top-actions{display:flex;flex-wrap:wrap;gap:8px}.top .btn{white-space:nowrap}a{color:var(--accent)}
+.mobile-note{margin:10px 0 0;font-size:.85rem;color:var(--muted)}.shopping-items{list-style:none;padding:0!important;display:grid;gap:0!important}.shopping-items li{display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid var(--line);padding:10px 0}.shopping-items input{width:20px;height:20px;accent-color:var(--accent)}.shopping-items li.checked span{text-decoration:line-through;color:var(--muted)}.shopping-items label{display:flex;gap:10px;flex:1;align-items:flex-start;cursor:pointer}.shopping-items button{border:0;background:none;color:var(--accent);padding:3px 8px}.inline-note{font-size:.88rem;color:var(--muted)}
+@media(max-width:620px){.wrap{width:calc(100% - 24px)}.top{padding-top:12px}.top-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.top-actions .btn{font-size:.83rem;padding:8px 9px}.top-actions .btn.primary{grid-column:span 2}.sheet{width:100%!important}.frow .lab{width:100%}}
+@media print{.top-actions,.tabs,.facets,.tools,.status,.webhint,footer{display:none!important}body{background:white;color:black}.card{break-inside:avoid}.wrap{width:100%}}
+.acct .who{flex:1 1 200px;min-width:0}
+.acct .who b{display:block}
+.acct .who .role{display:block;color:var(--muted);font-size:.88rem}
+.acct .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2e8b57;margin-right:6px;vertical-align:middle}
+.acct.out .dot{background:#c0392b}
+.qr{display:block;margin:12px auto;width:220px;height:220px;background:#fff;padding:10px;border-radius:8px}
+.steps{padding-left:1.2em;line-height:1.6}
+.sub b{color:var(--ink);font-variant-numeric:tabular-nums}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:8px 16px;font-weight:700}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:focus-visible,.tab:focus-visible,.star:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--star);outline-offset:2px}
+.tabs{display:flex;gap:6px;margin-top:24px;overflow-x:auto;padding-bottom:2px;border-bottom:2px solid var(--line)}
+.tab{flex:0 0 auto;border:1px solid var(--line);border-bottom:none;background:var(--chip);color:var(--ink);border-radius:10px 10px 0 0;padding:10px 14px 8px;display:flex;align-items:baseline;gap:8px;font-weight:700;position:relative;top:2px}
+.tab .n{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400}
+.tab[aria-selected="true"]{background:var(--paper);border-top:4px solid var(--tc,var(--ink));padding-top:7px}
+.facets{margin:14px 0 0;display:grid;gap:8px}
+.facets[hidden]{display:none}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.frow .lab{font-size:.76rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:118px}
+.fchip{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:.88rem;cursor:pointer;display:inline-flex;gap:6px;align-items:baseline}
+.fchip .n{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.fchip[aria-pressed="true"]{background:var(--tc,var(--ink));border-color:var(--tc,var(--ink));color:var(--paper)}
+.fchip[aria-pressed="true"] .n{color:inherit;opacity:.8}
+.fchip:focus-visible{outline:3px solid var(--star);outline-offset:2px}
+.chip.cui{background:transparent;border:1px solid var(--line);font-weight:600}
+.tools{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:18px 0 8px}
+.search{flex:1 1 260px;min-width:0;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:10px 14px;font:inherit}
+.toggle{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.95rem}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+.status{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+.group{margin-top:28px}
+.group h2{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0 0 12px;display:flex;align-items:baseline;gap:10px}
+.group h2 .n{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.group h2::before{content:"";width:14px;height:14px;border-radius:3px;background:var(--tc);display:inline-block;align-self:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--tc);border-radius:6px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card .head{display:flex;gap:8px;align-items:flex-start}
+.card h3{font-family:var(--display);font-weight:400;font-size:1.12rem;line-height:1.25;margin:0;flex:1;min-width:0;text-wrap:balance;overflow-wrap:anywhere}
+.star{border:none;background:none;color:var(--line);font-size:1.4rem;line-height:1;padding:2px 4px;border-radius:6px}
+.star[aria-pressed="true"]{color:var(--star)}
+.star:disabled{cursor:default;opacity:.5}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.82rem;color:var(--muted)}
+.meta time{font-family:var(--mono);font-size:.76rem}
+.chip{background:var(--chip);color:var(--ink);border-radius:4px;padding:1px 7px;font-size:.76rem;font-weight:700}
+.chip.full{background:var(--accent);color:var(--accent-ink)}
+.teaser{margin:0;color:var(--muted);font-size:.93rem}
+.links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:auto;padding-top:4px;font-size:.9rem}
+.links a,.links button{color:var(--accent);font-weight:700;text-decoration:none;background:none;border:none;padding:0}
+.links a:hover,.links button:hover{text-decoration:underline}
+.links .del{color:var(--muted);font-weight:400;margin-left:auto}
+.links .del:hover{color:var(--accent)}
+.toast{display:flex;align-items:center;gap:14px}
+.toast button{background:none;border:none;color:var(--star);font-weight:700;padding:0;text-decoration:underline}
+.card.gone{opacity:.7;border-style:dashed}
+.empty{background:var(--paper);border:1px dashed var(--line);border-radius:8px;padding:24px;color:var(--muted);text-align:center}
+/* sheet */
+.shade{position:fixed;inset:0;background:var(--shade);z-index:20}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--paper);z-index:21;overflow-y:auto;
+  padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));
+  box-shadow:-8px 0 30px rgba(0,0,0,.18)}
+.sheet h2{font-family:var(--display);font-weight:400;font-size:1.7rem;line-height:1.15;margin:0 0 6px;text-wrap:balance}
+.sheet h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 0 8px}
+.sheet ul,.sheet ol{margin:0;padding-left:1.3em;display:grid;gap:6px}
+.sheet .close{float:right;margin-left:12px}
+.sheet p{max-width:62ch}
+.form{display:grid;gap:14px;margin-top:14px}
+.form label{display:grid;gap:4px;font-weight:700;font-size:.92rem}
+.form .hint{font-weight:400;color:var(--muted);font-size:.82rem}
+.form input,.form select,.form textarea{font:inherit;font-weight:400;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:9px 11px;width:100%}
+.form textarea{min-height:120px;resize:vertical}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.err{color:var(--accent);font-weight:700;margin:0}
+.confirm{background:var(--chip);border-radius:8px;padding:12px;display:grid;gap:10px}
+.choices{display:grid;gap:12px;margin-top:18px}
+details summary{cursor:pointer;color:var(--accent);font-weight:700}
+details summary:focus-visible{outline:3px solid var(--star);outline-offset:2px}
+.choice{display:grid;grid-template-columns:44px 1fr;gap:4px 14px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:14px}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice:disabled{opacity:.55;cursor:default}
+.choice .ic{grid-row:span 2;width:44px;height:44px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-family:var(--mono);font-weight:500;color:var(--accent);font-size:1.05rem}
+.choice b{font-size:1.05rem}
+.choice span.d{color:var(--muted);font-size:.9rem;grid-column:2}
+.banner{background:var(--chip);border-left:4px solid var(--star);border-radius:6px;padding:10px 12px;font-size:.92rem;margin-top:10px}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.thumbs img{width:96px;height:96px;object-fit:cover;border-radius:6px;border:1px solid var(--line)}
+.thumbs{align-items:center}.thumb{position:relative;display:inline-block}
+.thumb .tx{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:inherit;font-size:1rem;line-height:1;cursor:pointer}
+.thumb .tx:focus-visible{outline:3px solid var(--star);outline-offset:2px}
+.tcount{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.filebtn.off{opacity:.45;pointer-events:none}
+.working{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.dot{animation:pulse 1s ease-in-out infinite}@keyframes pulse{50%{opacity:.25}}}
+.filebtn{position:relative;overflow:hidden}
+.filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:999px;z-index:30;font-weight:700}
+footer{margin-top:40px;color:var(--muted);font-size:.85rem;max-width:70ch}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:slide .2s ease-out}@keyframes slide{from{transform:translateX(30px);opacity:.6}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>My Cookbook</h1>
+      <p class="sub" id="sub">Recipes saved from your email, sorted into five sections.</p>
+    </div>
+    <div class="top-actions">
+      <button class="btn primary" id="addBtn" type="button">+ Add a recipe</button>
+      <button class="btn" id="shopBtn" type="button">Shopping list <span id="shopCount"></span></button>
+      <button class="btn" id="dataBtn" type="button">Backup / Restore</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Cookbook sections"></nav>
+  <div class="facets" id="facets" hidden></div>
+
+  <div class="tools">
+    <input class="search" id="q" type="search" placeholder="Search recipes, e.g. chicken, cabbage, lemon" aria-label="Search recipes">
+    <label class="toggle"><input type="checkbox" id="favOnly"> Favorites only</label>
+    <label class="toggle"><input type="checkbox" id="hideColl"> Hide collections</label>
+    <label class="toggle" id="delWrap" hidden><input type="checkbox" id="showDel"> <span id="delLabel">Show deleted</span></label>
+  </div>
+  <p class="status" id="status"></p>
+  <div class="webhint" id="webhint" hidden></div>
+  <main id="list"></main>
+
+  <footer>
+    <strong>My Cookbook · Alpha 0.2.5 · Red Dirt Code™</strong> — The built-in index contains 180 items from recipe emails dated Feb 16 to Nov 5, 2026. Recipe text, favorites, and shopping lists are saved <strong>on this device only</strong>. They do not automatically sync to Gmail or another device. Use Backup / Restore to make a copy before reinstalling, clearing app data, or changing phones. For full ingredients or steps, use "Find on" and "Add full recipe".
+  </footer>
+</div>
+
+<div class="shade" id="shade" hidden></div>
+<aside class="sheet" id="sheet" hidden aria-modal="true" role="dialog" aria-labelledby="sheetTitle"></aside>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<!-- Native Android print is handled by MainActivity. -->
+<script>
+// Recipe emails from Phil's Gmail archive (Feb 16 – Nov 5, 2026), deduplicated.
+// [title, section, tag, source, date, threadId, teaser]
+// Sections: A Appetizers, S Soups & Stews, M Main Courses, D Desserts, K Drinks & Cocktails
+const CATALOG = [
+["Cracker Barrel Meatloaf","M","","Allrecipes","2026-11-05","1a1ac576beecb248","A comforting copycat."],
+["Cranberry Orange Infused Bourbon","K","","Allrecipes","2026-11-05","1a1ac576beecb248","A holiday infusion featured in the Nov 5 email."],
+["Smothered Chicken","M","","Allrecipes","2026-11-04","1a1a730370166357","Creamy and comforting."],
+["Cattle Ranch Casserole","M","","Allrecipes","2026-11-03","1a1a209a473a1a03","A 9x13 winner."],
+["Jezebel Chicken","M","","Allrecipes","2026-11-01","1a198ef02df05895","A Southern favorite."],
+["Dirty Cabbage Soup","S","","Allrecipes","2026-10-28","1a182f2064747479","A surprise hit."],
+["Easy Cherry Turnovers","D","","MyRecipes","2026-10-26","1a17a1075e9db3cb",""],
+["German Dumplings","M","Side","Allrecipes","2026-10-26","1a179ddc46ca4cb0","Bacon makes everything better."],
+["Witches' Brew Stew","S","","Allrecipes","2026-10-26","1a178a5894515a54","Deliciously spooky."],
+["Dump and Bake Meatball Casserole","M","","MyRecipes","2026-10-25","1a174e7a4a74fcb7","One of the week's most-saved."],
+["Amish Beef and Noodles","M","","Allrecipes","2026-10-24","1a16f8b9a7a6429e","Comforting and satisfying."],
+["5 Sourdough Recipes to Bake This Weekend","D","Collection","Everyday Homemade","2026-10-24","1a16d88634a5c49b","Cranberry cheesecake bars, pumpkin bread, cinnamon roll focaccia and more."],
+["Tom Selleck's Favorite Chicken Dinner","M","","Allrecipes","2026-10-23","1a16b14f7e9a5cf3","Made for date night."],
+["10 Restaurant-Worthy Recipes From the Best New Chefs","M","Collection","Food & Wine","2026-10-23","1a16b0964f820449",""],
+["This Side Dish Is 'SO GOOD!'","M","Side","Allrecipes","2026-10-23","1a16a6d73a8ad55f","Ready in 15 minutes."],
+["15 Recipes Every Midwestern Grandmother Made","M","Collection","Allrecipes","2026-10-23","1a169c629c937772",""],
+["Magical Dressing","A","Salad","Allrecipes","2026-10-23","1a169322f3aeee6d","Takes five minutes."],
+["Korean-Style Sweet and Spicy Steak Bites","A","","MyRecipes","2026-10-21","1a16051b7cc48a79",""],
+["This Fall Dinner Is 'Husband Approved!'","M","","Allrecipes","2026-10-21","1a15ee57bffe65bd","Quick, cozy weeknight meal."],
+["This Soup Is 'Yummy!!!'","S","","Allrecipes","2026-10-20","1a159bf1bfe91db9","Ready in 30 minutes."],
+["Orange Biscuits","D","Baking","MyRecipes","2026-10-19","1a1560319fb8bb97",""],
+["Lazy Apple Cinnamon Spoon Cake","D","","Allrecipes","2026-10-17","1a14a9a5ccb3b4c3","Easier than pie."],
+["Pennsylvania Dutch Chicken Soup","S","","Allrecipes","2026-10-15","1a13ffe8e50f6cef","A pot full of comfort."],
+["Supreme Chicken","M","","Allrecipes","2026-10-08","1a11bf0588bd90d5","Easy cheesy chicken."],
+["German Chicken","M","","Allrecipes","2026-10-02","1a0fe3e806141348","Only three ingredients."],
+["20 Slow Cooker Recipes for When You're Tired of Soup","M","Collection","Allrecipes","2026-10-02","1a0fd97f5a9d0750",""],
+["Sausage, Peppers, Onions, and Potato Bake","M","","Allrecipes","2026-09-27","1a0e47e43c3512d9","Italian comfort."],
+["Date Me Chicken","M","","Allrecipes","2026-09-25","1a0dad99367facb7",""],
+["This Slow Cooker Dinner Has 'Amazing Flavors!'","M","","Allrecipes","2026-09-25","1a0d8fc08d9a4204","A Puerto Rican classic."],
+["This Greek Casserole Is 'Crazy Good!'","M","","Allrecipes","2026-09-23","1a0ceaf7bf31e9ef","A Chef John mashup."],
+["Udon Carbonara","M","","MyRecipes","2026-09-16","1a0ac0b5c49dc20f",""],
+["Appalachian Apple Stack Cake","D","","Allrecipes","2026-09-16","1a0ab9c120ff38cb","Old-fashioned charm."],
+["Chicken au Poivre","M","","MyRecipes","2026-09-13","1a09c954ea0c4b31",""],
+["Cowboy Pie","M","","Allrecipes","2026-09-06","1a07852a1eefd53d","Southwest flavors in about 30 minutes."],
+["Porcupine Meatballs","M","","Allrecipes","2026-09-06","1a07721e5fb6eb81","A classic that never goes out of style."],
+["Garlicky Sautéed Cabbage","M","Side","MyRecipes","2026-09-02","1a063f51cebe41bf","Goes with everything."],
+["Swamp Cabbage","M","Side","Allrecipes","2026-08-31","1a05840b9294f85a","A quick, bold side."],
+["Italian Penicillin Soup","S","","Allrecipes","2026-08-29","1a04f23552ca8bdb","The coziest remedy."],
+["This Chicken Casserole Is 'Fabulous'","M","","Allrecipes","2026-08-25","1a0395641403f99e","Leftovers you'll want to eat."],
+["Honey Garlic Chicken Bites","A","","Allrecipes","2026-08-14","1a000b04d73ba22d","Ready in 30 minutes."],
+["Slow Cooker Cowboy Butter Steak Bites","A","","Allrecipes","2026-08-08","19fe2fcbd6fd8dc3",""],
+["Lo Mein Noodles","M","","Allrecipes","2026-08-08","19fe1cf1f62842b1","A simple four-ingredient sauce."],
+["Million Dollar Chicken Casserole","M","From Tricia","Allrecipes","2026-08-07","19fd9a8134eb5a6c","Forwarded by Tricia."],
+["Crab Rangoon Nachos","A","","Allrecipes","2026-08-07","19fd9a8134eb5a6c","Featured in the email Tricia forwarded."],
+["Pasta Primavera","M","","Pressure Luck Cooking","2026-08-03","19fc8276393df51f",""],
+["Drunken Noodles","M","","Allrecipes","2026-08-03","19fc80cee7b7d79c","Chef John's take."],
+["Hawaiian Chicken","M","","Allrecipes","2026-07-31","19fb9c46d8f093e6","The secret is the marinade."],
+["Chinese Zucchini Pancakes","A","","MyRecipes","2026-07-27","19fa561808073590",""],
+["This Italian Slow Cooker Dinner Is 'Soooooo Yummy!'","M","","Allrecipes","2026-07-27","19fa52aa64526ba2",""],
+["Sausage, Cranberry, and Biscuit Breakfast Bake","M","Breakfast","MyRecipes","2026-07-19","19f7c2e48a473d01",""],
+["Swamp Dogs","M","","Allrecipes","2026-07-17","19f707d09946b7b3","A cast iron dinner."],
+["This Chicken Dinner Is 'Fantastic!'","M","","Allrecipes","2026-07-10","19f4e4392137a50b","Comfort in one pan."],
+["Shipwreck Casserole","M","","Allrecipes","2026-07-08","19f435290bd4b4a6","An old-fashioned staple."],
+["9x13 Chicken Casseroles That Never Fail","M","Collection","Allrecipes","2026-07-08","19f42acff4c32c52",""],
+["One-Pot Cowboy Casserole","M","","Allrecipes","2026-07-06","19f37d748e6e000f","A 30-minute meal."],
+["Cheeseburger Bowls","M","","Allrecipes","2026-07-05","19f33df8406bb12e",""],
+["Dynamite Rice","M","","Allrecipes","2026-07-03","19f286388e2724a0","A foolproof seafood dinner."],
+["12 Recipes To Make When You're Too Tired To Cook","M","Collection","Allrecipes","2026-07-01","19f1ea0f9142bb69",""],
+["Magic Lemon Cobbler","D","","Allrecipes","2026-06-29","19f153c3fa7b3cb0","Practically makes itself."],
+["The 9x13 Side Dish 'My Wife Is in Love With'","M","Side","Allrecipes","2026-06-26","19f0588745c2a6d8",""],
+["Pineapple Heaven Cake","D","","Allrecipes","2026-06-25","19eff3187bb21e6b","Perfect for a potluck."],
+["Maria's Pepper Steak","M","","Allrecipes","2026-06-24","19efb38f7ded8307","Ready in under an hour."],
+["Potluck Ambrosia","D","","Allrecipes","2026-06-24","19efa0a73c6387b9",""],
+["Funeral Sandwiches","A","","Allrecipes","2026-06-23","19ef4e41bddbf464","A hit at any gathering."],
+["Easy Ground Beef Stroganoff","M","","Allrecipes","2026-06-21","19eebc72e674021e","A 30-minute meal."],
+["Million-Dollar Cookies","D","","Allrecipes","2026-06-15","19ecbb204c59c36f",""],
+["7 Ground Beef Dinners for Every Night of the Week","M","Collection","Allrecipes","2026-06-14","19ec7164d5b3a01f",""],
+["King Ranch Casserole","M","","MyRecipes","2026-06-13","19ec2c9469314c93",""],
+["This Slow Cooker Appetizer Is 'Unbelievable!!'","A","","Allrecipes","2026-06-12","19ebc3ece3f9d31e","Only three ingredients."],
+["One-Pot Teriyaki Chicken Casserole","M","","Allrecipes","2026-06-09","19eac93ec280c2f2",""],
+["Heaven on Earth Cake","D","","Allrecipes","2026-06-08","19ea7a532884a04b","A no-bake crowd pleaser."],
+["Chicken Crunchwrap Casserole","M","","Allrecipes","2026-06-07","19ea27e3ad27233e","Taco Tuesday ready."],
+["Texas Potato Salad","A","Salad","MyRecipes","2026-06-06","19e9ebcf6757a556",""],
+["Crispy Chicken Parm Patties","M","","Allrecipes","2026-06-06","19e9e88d84fda965",""],
+["Tomato Soup Sourdough Bread","D","Baking","Everyday Homemade","2026-06-06","19e9cc5006f5cfc2","Sourdough made with tomato basil soup in the dough."],
+["The Classic British Potato Recipe That's Almost 300 Years Old","M","Side","Allrecipes","2026-06-05","19e9a0738a56605b",""],
+["Mud Hen Bars","D","","MyRecipes","2026-06-05","19e999803125dbe3","A retro dessert."],
+["Crying Tiger","M","","MyRecipes","2026-06-04","19e94701a0d71c60",""],
+["Best Penne alla Vodka","M","","Allrecipes","2026-06-03","19e8f12b25449185","A 30-minute winner."],
+["This Simple Ground Beef Dinner Is 'Absolutely Delicious!!'","M","","Allrecipes","2026-06-03","19e8de524caf3d7a","Ready in 20 minutes."],
+["Chocolate Magic Cake","D","","Allrecipes","2026-06-03","19e8d245c6c0e92a",""],
+["Chicken French","M","","Allrecipes","2026-06-02","19e88be3995ea459","A regional favorite."],
+["Lemon Blueberry Angel Bars","D","","Allrecipes","2026-06-01","19e83981f52ac25c","Three ingredients."],
+["Slow Cooker Smothered Chicken","M","","Allrecipes","2026-05-31","19e7fa084cef2d52","Three-step prep."],
+["Magical Egg Salad","A","Salad","Allrecipes","2026-05-31","19e7e7191e8444df",""],
+["Lemon Dump Cake","D","","MyRecipes","2026-05-29","19e758b8e6939b00",""],
+["Grandma's Salad Dressing","A","Salad","Allrecipes","2026-05-26","19e64b1ca35ccf7c","Sweet and tangy."],
+["Chicken Hurry","M","","Allrecipes","2026-05-24","19e5a64fdd636106","Four ingredients."],
+["Most-Requested Chocolate Chip Cookies","D","","Allrecipes","2026-05-23","19e547e77ba0ab62","With an unexpected ingredient."],
+["Chicken Cobbler","M","","MyRecipes","2026-05-22","19e517f1c99f2dba",""],
+["Magic Chicken Dinner","M","","Allrecipes","2026-05-18","19e3b7fd883eb969","Ready in an hour."],
+["Angel Chicken","M","","Allrecipes","2026-05-16","19e326192b705e97",""],
+["Dirty Cabbage","M","Side","Allrecipes","2026-05-15","19e2c0c18d71c8f8","A zesty side."],
+["French Crispy Potatoes","M","Side","Allrecipes","2026-05-14","19e26e59c205bb01",""],
+["Cucumber Salad and More Summer Potluck Recipes","A","Collection","MyRecipes","2026-05-13","19e21da873e28f99",""],
+["Thai Peanut Chicken","M","","Allrecipes","2026-05-13","19e21c081e24fc6b",""],
+["35 Mediterranean Recipes to Make ASAP","M","Collection","Allrecipes","2026-05-12","19e1d286cd624371",""],
+["The Church Potluck Chicken Casserole You Haven't Heard Of","M","","Allrecipes","2026-05-12","19e1c9a2aacd4770",""],
+["This Lazy Chicken Casserole Is 'PERFECT'","M","","Allrecipes","2026-05-07","19e02d9fa10496f8","Ready in an hour."],
+["The 15-Minute Recipe From a 50-Year-Old Magazine","M","","Allrecipes","2026-05-04","19df499981f934a2",""],
+["9x13 Italian Casseroles That Would Make Nonna Proud","M","Collection","Allrecipes","2026-05-01","19de47fe3dda09c5",""],
+["Lemon Blueberry Magic Cake","D","","Allrecipes","2026-04-23","19db7a384cc3f83e",""],
+["Chicken Salpicao","M","","Allrecipes","2026-04-22","19db6d75f6e89bee","Pantry staples."],
+["This Mexican Casserole Is 'Crazy but Delicious'","M","","Allrecipes","2026-04-20","19dac8a42796dc32",""],
+["This Slow Cooker Dinner Is 'Hands Down My Favorite'","M","","Allrecipes","2026-04-19","19da6274814ae117",""],
+["5 'Grandma's Sunday Dinner' Recipes","M","Collection","Allrecipes","2026-04-17","19d9c735ba09c0ca",""],
+["Bisquick Coffee Cake","D","Baking","Allrecipes","2026-04-17","19d9be11d8c1b9e6",""],
+["Chicken Scarpariello","M","","Allrecipes","2026-04-16","19d96ba68536ee8d",""],
+["Crispy Chicken Schnitzel","M","","Allrecipes","2026-04-15","19d92ceb68354a49",""],
+["35 Chicken Dinner Recipes for Busy Nights","M","Collection","Allrecipes","2026-04-14","19d8d02552cefb5e",""],
+["Chicken Marsala Rice Casserole","M","","Allrecipes","2026-04-14","19d8c6de6eee90aa","Like a creamy risotto."],
+["Alfredo Marinara Pasta Bake","M","","Allrecipes","2026-04-13","19d87476cc5adc0b",""],
+["The Casserole","M","","Allrecipes","2026-04-12","19d8221864ad2507",""],
+["The Church Casserole I Could Eat Every Week","M","","Allrecipes","2026-04-11","19d7e37a0370e745",""],
+["20 Vintage Dessert Recipes From Church Cookbooks","D","Collection","Allrecipes","2026-04-11","19d7d466b49539a0",""],
+["Tater Tot Breakfast Casserole","M","Breakfast","Allrecipes","2026-04-11","19d7cfca8d74d882",""],
+["This Italian Dinner Is 'Absolutely Fantastic!'","M","","Allrecipes","2026-04-10","19d790c68295d9c1",""],
+["20 Vintage Recipes From Church Cookbooks","M","Collection","Allrecipes","2026-04-10","19d7867ee50ebf8e",""],
+["This Casserole Is a 'Hit Every Time'","M","","Allrecipes","2026-04-10","19d77d480927ce28","Four ingredients."],
+["10 Casseroles That Are Even Better the Next Day","M","Collection","Allrecipes","2026-04-09","19d733ed7694dd91",""],
+["Chocolate Éclair Cake","D","","Allrecipes","2026-04-08","19d6f53a34beb886","Everyone's favorite no-bake."],
+["This Beef Dinner Has 'Superb Flavor!'","M","","Allrecipes","2026-04-08","19d6d87cd8a99a8c","Low and slow."],
+["12 Lovable Recipes From Grandma's Recipe Box","M","Collection","Allrecipes","2026-04-06","19d63c8dae1c7e0f",""],
+["Dirty Spaghetti","M","","Allrecipes","2026-04-06","19d633aa9ccf0efe","One-pan meal."],
+["Creamy Beef and Shells","M","","Allrecipes","2026-04-05","19d5f49ffc7a5f85",""],
+["Best Egg Salad","A","Salad","Allrecipes","2026-04-05","19d5e14165745acd",""],
+["Perfect Rump Roast","M","","Allrecipes","2026-04-01","19d4aafdf72a90f5",""],
+["The One Easter Recipe We're All Making","D","","Allrecipes","2026-04-01","19d4aa1f34d013da","Ready in 30 minutes."],
+["No-Bake Lemon Bars","D","","Allrecipes","2026-03-30","19d3f2e28a257ae2",""],
+["Amish Haystacks","M","","Allrecipes","2026-03-29","19d3a07267c68f8b",""],
+["Easy 9x13 Dinner Recipes To Make on Repeat","M","Collection","Allrecipes","2026-03-23","19d1baf58217e5bd",""],
+["Swiss Chicken Casserole","M","","Allrecipes","2026-03-22","19d1732f42e7602e",""],
+["13 Copycat Appetizers From Your Favorite Restaurants","A","Collection","Allrecipes","2026-03-22","19d16897630655ad",""],
+["Southern Breakfast Potatoes","M","Side","Allrecipes","2026-03-22","19d15fab4098ade2",""],
+["This Tex-Mex Dinner Is 'Super Yummy and Easy'","M","","Allrecipes","2026-03-20","19d0d9062364302e","Ready in 30 minutes."],
+["Million Dollar Grilled Cheese","M","","Allrecipes","2026-03-20","19d0bad14dfecfac",""],
+["12 Low-Effort Dinners To Make on Repeat","M","Collection","Allrecipes","2026-03-19","19d0714a2bb6a353",""],
+["25 Beloved Recipes From Mom's Kitchen","M","Collection","Allrecipes","2026-03-18","19d01ee5f1f19d03",""],
+["This Lazy Dinner Has 'FABULOUS TASTE!!'","M","","Allrecipes","2026-03-18","19d01605075c17a4","Ready in 30 minutes."],
+["This Sheet Pan Dinner 'Turned Out Perfect!'","M","","Allrecipes","2026-03-15","19cf1ed5e81fcc00","Fresh Greek flavors."],
+["The Perfect Potluck Dessert That'll Disappear in Minutes","D","","Allrecipes","2026-03-14","19ced81746d562d8",""],
+["17 Irish Pub Recipes You Have To Try","M","Collection","Allrecipes","2026-03-14","19ced51ad47c195c",""],
+["Irish Steaks","M","","Allrecipes","2026-03-14","19cecc8d1d1716e8","Whiskey takes it over the top."],
+["The Chicken Recipe That's Been a Family Legend for 30 Years","M","","Allrecipes","2026-03-13","19ce97dad8b4a810",""],
+["Amish Buttered Noodles","M","Side","Allrecipes","2026-03-13","19ce7a0ea8122568","Four ingredients."],
+["5-Ingredient Ground Beef Recipes to Make On Repeat","M","Collection","Allrecipes","2026-03-12","19ce30c5a4338363",""],
+["7 Chicken Dinners for Every Night of the Week","M","Collection","Allrecipes","2026-03-11","19cdde2eac0ec20a",""],
+["Easy Enchilada Casserole","M","","Allrecipes","2026-03-11","19cdd537731087f8",""],
+["Beef Nacho Casserole","M","","Allrecipes","2026-03-10","19cd9611a9abd535",""],
+["20 Italian Recipes You've Probably Never Tried","M","Collection","Allrecipes","2026-03-10","19cd8bfa5b74bce5",""],
+["Pork Chop Steaks","M","","Allrecipes","2026-03-10","19cd82e1307bae6d","Cheaper than beef."],
+["Million Dollar Soup","S","","Allrecipes","2026-03-09","19cd43edaa152569",""],
+["Easy 9x13 Vintage Casseroles That Deserve a Comeback","M","Collection","Allrecipes","2026-03-09","19cd394975fcd1c4",""],
+["18 Dishes To Refresh Your Routine","M","Collection","MyRecipes","2026-03-09","19cd32641fe14a79",""],
+["Million Dollar Cucumber Salad","A","Salad","Allrecipes","2026-03-08","19ccde133906eb18","Crisp and creamy."],
+["This Midwestern One-Pan Dinner Is a 'Taste of Home'","M","","Allrecipes","2026-03-07","19cca261284c4448",""],
+["12 Vintage Casseroles You Can Make In Your Slow Cooker","M","Collection","Allrecipes","2026-03-07","19cc97a1734ef9dc",""],
+["The 15-Minute Dinner You'll Want to Double","M","","Allrecipes","2026-03-04","19cb97f124fc1286",""],
+["Cinnamon Roll Butter Swim Biscuits","D","Baking","Allrecipes","2026-03-03","19cb45a0853c6954",""],
+["This Slow Cooker Soup Is 'Hands Down My Favorite'","S","","Allrecipes","2026-03-02","19caf3289e14742e",""],
+["Queen Elizabeth Cake","D","","Allrecipes","2026-02-28","19ca4c3aea51ff3b",""],
+["The 10-Minute Dinner Our Editors Can't Stop Making","M","","Allrecipes","2026-02-28","19ca19a6ce771296",""],
+["Greek Chicken Soup","S","","Allrecipes","2026-02-27","19ca0f81e798215b","Ready in under an hour."],
+["Cool Whip Cookies","D","","Allrecipes","2026-02-27","19c9fc14ad08955f",""],
+["This One-Pan Dinner Is 'So Tasty!'","M","","Allrecipes","2026-02-26","19c9bcc41671c17b",""],
+["4-Ingredient Cucumber Salad","A","Salad","Allrecipes","2026-02-24","19c904adbbb9b701",""],
+["The 9x13 Chicken Recipe Served at Weddings","M","","Allrecipes","2026-02-23","19c8c608a9ba3b41",""],
+["30 Creamy Chicken Recipes Your Family Will Love","M","Collection","Allrecipes","2026-02-23","19c8bb471ebc30a2",""],
+["Bloomin' Potato","A","","Allrecipes","2026-02-23","19c8b279a689d1ee","Crispy without frying."],
+["Tiger Chicken","M","","Allrecipes","2026-02-21","19c820b914180963",""],
+["The '90s Dump Cake Making a Comeback","D","","Allrecipes","2026-02-21","19c8014b7741b4a0","Strawberry shortcake vibes."],
+["This One-Pot Italian Dinner Is a 'Thumbs up Recipe!'","M","","Allrecipes","2026-02-20","19c7bb4bb8c3e7d7",""],
+["German Hamburgers","M","","Allrecipes","2026-02-19","19c77c50d05dc156",""],
+["4-Ingredient Soup Recipes","S","Collection","Allrecipes","2026-02-19","19c771c32d8c7639",""],
+["Sausage Egg McMuffin Casserole","M","Breakfast","Allrecipes","2026-02-19","19c768e687139d07",""],
+["24 Classic Recipes from Grandma's Kitchen","M","Collection","MyRecipes","2026-02-18","19c71825271d2636",""],
+["7 Slow Cooker Ground Beef Recipes","M","Collection","Allrecipes","2026-02-17","19c6cd7276abe7c8",""],
+["Famous Pork Chops","M","","Allrecipes","2026-02-17","19c6c4194262b01e","Five ingredients."],
+["20 Soup Recipes From Ingredients You Already Have","S","Collection","Allrecipes","2026-02-16","19c67a25f465eb73",""],
+["Mardi Gras Pasta","M","","Allrecipes","2026-02-16","19c671b5c1f5cab1",""]
+];
+
+const SECTIONS=[["A","Appetizers"],["S","Soups & Stews"],["M","Main Courses"],["D","Desserts"],["K","Drinks & Cocktails"]];
+const SECNAME=Object.fromEntries(SECTIONS);
+
+// Cuisine and main ingredient. Codes keep the catalog tags short.
+const CUISINES=[["AM","American"],["SO","Southern & Cajun"],["MX","Mexican & Tex-Mex"],["IT","Italian"],["AS","Asian"],["EU","German & European"],["MD","Greek & Mediterranean"],["LA","Latin & Caribbean"],["OT","Other"]];
+const MAINS=[["CH","Chicken"],["BF","Beef"],["PK","Pork"],["SF","Seafood"],["VG","Vegetarian"],["OT","Other / mixed"]];
+const CUINAME=Object.fromEntries(CUISINES),MAINNAME=Object.fromEntries(MAINS);
+const FACET_SECS=["M","S"];
+// Email recipes tagged from their titles: title -> [cuisine, main]. "" = not tagged (most collections).
+const TAGS={
+"Cracker Barrel Meatloaf":["SO","BF"],"Smothered Chicken":["SO","CH"],"Cattle Ranch Casserole":["AM","BF"],"Jezebel Chicken":["SO","CH"],
+"Dirty Cabbage Soup":["SO","OT"],"German Dumplings":["EU","PK"],"Witches' Brew Stew":["AM","BF"],"Dump and Bake Meatball Casserole":["IT","BF"],
+"Amish Beef and Noodles":["AM","BF"],"Tom Selleck's Favorite Chicken Dinner":["AM","CH"],"This Side Dish Is 'SO GOOD!'":["AM","OT"],
+"15 Recipes Every Midwestern Grandmother Made":["AM",""],"This Fall Dinner Is 'Husband Approved!'":["AM","OT"],"This Soup Is 'Yummy!!!'":["AM","OT"],
+"Pennsylvania Dutch Chicken Soup":["AM","CH"],"Supreme Chicken":["AM","CH"],"German Chicken":["EU","CH"],
+"Sausage, Peppers, Onions, and Potato Bake":["IT","PK"],"Date Me Chicken":["AM","CH"],"This Slow Cooker Dinner Has 'Amazing Flavors!'":["LA","OT"],
+"This Greek Casserole Is 'Crazy Good!'":["MD","OT"],"Udon Carbonara":["AS","PK"],"Chicken au Poivre":["EU","CH"],"Cowboy Pie":["MX","BF"],
+"Porcupine Meatballs":["AM","BF"],"Garlicky Sautéed Cabbage":["AM","VG"],"Swamp Cabbage":["SO","VG"],"Italian Penicillin Soup":["IT","CH"],
+"This Chicken Casserole Is 'Fabulous'":["AM","CH"],"Lo Mein Noodles":["AS","VG"],"Million Dollar Chicken Casserole":["AM","CH"],
+"Pasta Primavera":["IT","VG"],"Drunken Noodles":["AS","OT"],"Hawaiian Chicken":["OT","CH"],"This Italian Slow Cooker Dinner Is 'Soooooo Yummy!'":["IT","OT"],
+"Sausage, Cranberry, and Biscuit Breakfast Bake":["AM","PK"],"Swamp Dogs":["SO","PK"],"This Chicken Dinner Is 'Fantastic!'":["AM","CH"],
+"Shipwreck Casserole":["AM","BF"],"9x13 Chicken Casseroles That Never Fail":["AM","CH"],"One-Pot Cowboy Casserole":["AM","BF"],
+"Cheeseburger Bowls":["AM","BF"],"Dynamite Rice":["AS","SF"],"The 9x13 Side Dish 'My Wife Is in Love With'":["AM","OT"],
+"Maria's Pepper Steak":["AS","BF"],"Easy Ground Beef Stroganoff":["EU","BF"],"7 Ground Beef Dinners for Every Night of the Week":["","BF"],
+"King Ranch Casserole":["MX","CH"],"One-Pot Teriyaki Chicken Casserole":["AS","CH"],"Chicken Crunchwrap Casserole":["MX","CH"],
+"Crispy Chicken Parm Patties":["IT","CH"],"The Classic British Potato Recipe That's Almost 300 Years Old":["EU","VG"],"Crying Tiger":["AS","BF"],
+"Best Penne alla Vodka":["IT","VG"],"This Simple Ground Beef Dinner Is 'Absolutely Delicious!!'":["AM","BF"],"Chicken French":["AM","CH"],
+"Slow Cooker Smothered Chicken":["SO","CH"],"Chicken Hurry":["SO","CH"],"Chicken Cobbler":["SO","CH"],"Magic Chicken Dinner":["AM","CH"],
+"Angel Chicken":["IT","CH"],"Dirty Cabbage":["SO","OT"],"French Crispy Potatoes":["EU","VG"],"Thai Peanut Chicken":["AS","CH"],
+"35 Mediterranean Recipes to Make ASAP":["MD",""],"The Church Potluck Chicken Casserole You Haven't Heard Of":["AM","CH"],
+"This Lazy Chicken Casserole Is 'PERFECT'":["AM","CH"],"The 15-Minute Recipe From a 50-Year-Old Magazine":["AM","OT"],
+"9x13 Italian Casseroles That Would Make Nonna Proud":["IT",""],"Chicken Salpicao":["LA","CH"],"This Mexican Casserole Is 'Crazy but Delicious'":["MX","OT"],
+"This Slow Cooker Dinner Is 'Hands Down My Favorite'":["AM","OT"],"5 'Grandma's Sunday Dinner' Recipes":["AM",""],"Chicken Scarpariello":["IT","CH"],
+"Crispy Chicken Schnitzel":["EU","CH"],"35 Chicken Dinner Recipes for Busy Nights":["","CH"],"Chicken Marsala Rice Casserole":["IT","CH"],
+"Alfredo Marinara Pasta Bake":["IT","OT"],"The Casserole":["AM","OT"],"The Church Casserole I Could Eat Every Week":["AM","OT"],
+"Tater Tot Breakfast Casserole":["AM","PK"],"This Italian Dinner Is 'Absolutely Fantastic!'":["IT","OT"],"20 Vintage Recipes From Church Cookbooks":["AM",""],
+"This Casserole Is a 'Hit Every Time'":["AM","OT"],"This Beef Dinner Has 'Superb Flavor!'":["AM","BF"],"12 Lovable Recipes From Grandma's Recipe Box":["AM",""],
+"Dirty Spaghetti":["AM","BF"],"Creamy Beef and Shells":["AM","BF"],"Perfect Rump Roast":["AM","BF"],"Amish Haystacks":["AM","BF"],
+"Swiss Chicken Casserole":["AM","CH"],"Southern Breakfast Potatoes":["SO","VG"],"This Tex-Mex Dinner Is 'Super Yummy and Easy'":["MX","OT"],
+"Million Dollar Grilled Cheese":["AM","VG"],"25 Beloved Recipes From Mom's Kitchen":["AM",""],"This Lazy Dinner Has 'FABULOUS TASTE!!'":["AM","OT"],
+"This Sheet Pan Dinner 'Turned Out Perfect!'":["MD","OT"],"17 Irish Pub Recipes You Have To Try":["EU",""],"Irish Steaks":["EU","BF"],
+"The Chicken Recipe That's Been a Family Legend for 30 Years":["AM","CH"],"Amish Buttered Noodles":["AM","VG"],
+"5-Ingredient Ground Beef Recipes to Make On Repeat":["","BF"],"7 Chicken Dinners for Every Night of the Week":["","CH"],
+"Easy Enchilada Casserole":["MX","OT"],"Beef Nacho Casserole":["MX","BF"],"20 Italian Recipes You've Probably Never Tried":["IT",""],
+"Pork Chop Steaks":["AM","PK"],"Million Dollar Soup":["AM","OT"],"Easy 9x13 Vintage Casseroles That Deserve a Comeback":["AM",""],
+"This Midwestern One-Pan Dinner Is a 'Taste of Home'":["AM","OT"],"12 Vintage Casseroles You Can Make In Your Slow Cooker":["AM",""],
+"The 15-Minute Dinner You'll Want to Double":["AM","OT"],"This Slow Cooker Soup Is 'Hands Down My Favorite'":["AM","OT"],
+"The 10-Minute Dinner Our Editors Can't Stop Making":["AM","OT"],"Greek Chicken Soup":["MD","CH"],"This One-Pan Dinner Is 'So Tasty!'":["AM","OT"],
+"The 9x13 Chicken Recipe Served at Weddings":["AM","CH"],"30 Creamy Chicken Recipes Your Family Will Love":["","CH"],"Tiger Chicken":["AS","CH"],
+"This One-Pot Italian Dinner Is a 'Thumbs up Recipe!'":["IT","OT"],"German Hamburgers":["EU","BF"],"Sausage Egg McMuffin Casserole":["AM","PK"],
+"24 Classic Recipes from Grandma's Kitchen":["AM",""],"7 Slow Cooker Ground Beef Recipes":["","BF"],"Famous Pork Chops":["AM","PK"],"Mardi Gras Pasta":["SO","OT"]
+};
+function tagOf(it){const r=it.kind==="own"?it.rec:fullFor(it.key);const t=TAGS[it.title]||["",""];
+  return {cui:(r&&CUINAME[r.cuisine]?r.cuisine:"")||t[0]||"",main:(r&&MAINNAME[r.main]?r.main:"")||t[1]||""}}
+const facetsOn=()=>FACET_SECS.includes(state.tab);
+const SEARCH_URL={"Allrecipes":"https://www.allrecipes.com/search?q=","MyRecipes":"https://www.google.com/search?q=site%3Amyrecipes.com%20","Food & Wine":"https://www.foodandwine.com/search?q=","Pressure Luck Cooking":"https://pressureluckcooking.com/?s=","Everyday Homemade":"https://everydayhomemade.com/?s="};
+const slug=s=>s.toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);
+const BASE=CATALOG.map(([title,sec,tag,source,date,thread,teaser])=>({key:thread+"-"+slug(title),title,sec,tag,source,date,thread,teaser,kind:"email"}));
+
+const state={tab:"all",cui:"",main:"",q:"",favOnly:false,hideColl:false,showDel:false,hidden:new Set(),favs:new Set(),added:[],shopping:[],db:null,canWrite:true,loaded:false};
+try{state.tab=localStorage.getItem("cb-tab")||"all";}catch(e){}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtDate=d=>{if(!d)return"";const [y,m,da]=d.split("-");return `${da} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m-1]} ${y}`};
+function toast(t,label,fn){const el=$("toast");el.textContent=t;
+  if(label){const b=document.createElement("button");b.type="button";b.textContent=label;b.onclick=()=>{el.hidden=true;fn()};el.appendChild(b)}
+  el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,label?7000:2400)}
+
+// full recipes added for an email card are stored with ref = card key
+function fullFor(key){return state.added.find(r=>r.ref===key)}
+function allItems(){
+  const own=state.added.filter(r=>!r.ref).map(r=>({key:"own-"+r.id,title:r.title,sec:r.sec,tag:"Your recipe",source:r.source||"Added by you",date:(r.createdAt||"").slice(0,10),teaser:r.notes||"",kind:"own",rec:r}));
+  return own.concat(BASE);
+}
+// Search: titles, ingredients, steps, notes, cuisine and main ingredient. "potatoes" also finds "potato".
+const stem=w=>w.length>4&&/ies$/.test(w)?w.slice(0,-3):w.length>4&&/oes$/.test(w)?w.slice(0,-2):w.length>3&&/[^s]s$/.test(w)?w.slice(0,-1):w;
+const qWords=()=>state.q.toLowerCase().split(/[\s,]+/).filter(Boolean).map(stem);
+const HAY=new Map();
+function hayOf(it){const full=it.kind==="own"?it.rec:fullFor(it.key);const t=FACET_SECS.includes(it.sec)?tagOf(it):{};
+  const k=it.key+"|"+(full?JSON.stringify(full).length:0)+"|"+(t.cui||"")+(t.main||"");if(HAY.has(k))return HAY.get(k);
+  const h=[it.title,it.tag,it.source,it.teaser,SECNAME[it.sec],t.cui&&CUINAME[t.cui],t.main&&MAINNAME[t.main],
+    full&&(full.ingredients||[]).join(" "),full&&(full.steps||[]).join(" "),full&&full.notes].filter(Boolean).join(" ").toLowerCase();
+  HAY.set(k,h);return h}
+function hiTitle(t){const w=state.q?qWords().filter(x=>x.length>1):[];let h=esc(t);if(!w.length)return h;
+  const re=new RegExp("("+w.map(x=>esc(x).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")","gi");
+  return h.replace(/(<[^>]*>)|([^<]+)/g,(m,tag,txt)=>tag||txt.replace(re,"<mark>$1</mark>"))}
+function titleHit(it){const t=it.title.toLowerCase();return qWords().filter(x=>t.includes(x)).length}
+function matches(it){
+  if(state.hidden.has(it.key)!==state.showDel)return false;
+  if(state.tab!=="all"&&it.sec!==state.tab&&!state.q)return false;
+  if(state.favOnly&&!state.favs.has(it.key))return false;
+  if(state.hideColl&&it.tag==="Collection")return false;
+  if(facetsOn()&&(state.cui||state.main)){const t=tagOf(it);if(state.cui&&t.cui!==state.cui)return false;if(state.main&&t.main!==state.main)return false;}
+  if(state.q){const w=qWords();if(!w.length)return true;const hay=hayOf(it);if(!w.every(x=>hay.includes(x)))return false;}
+  return true;
+}
+function renderTabs(){
+  const items=allItems().filter(i=>state.showDel?state.hidden.has(i.key):!state.hidden.has(i.key));
+  $("delWrap").hidden=!state.hidden.size&&!state.showDel;$("delLabel").textContent=`Show deleted (${state.hidden.size})`;
+  const count=s=>items.filter(i=>s==="all"||i.sec===s).length;
+  $("tabs").innerHTML=[["all","All recipes"],...SECTIONS].map(([k,n])=>
+    `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${state.tab===k}" style="--tc:${k==="all"?"var(--ink)":`var(--tab-${k})`}">${esc(n)} <span class="n">${count(k)}</span></button>`).join("");
+  const real=BASE.filter(b=>b.tag!=="Collection").length;
+  $("sub").innerHTML=state.showDel?`Showing <b>${items.length}</b> deleted ${items.length===1?"recipe":"recipes"}. Tap Restore to put one back.`:`<b>${items.length}</b> recipes and collections, <b>${state.favs.size}</b> starred, <b>${state.added.length}</b> written out in full.`;
+}
+function renderFacets(){
+  const box=$("facets");if(!facetsOn()){box.hidden=true;box.innerHTML="";return}
+  // counts for each chip, honoring every other filter
+  const saved=[state.cui,state.main];
+  const countFor=(cui,main)=>{state.cui=cui;state.main=main;const n=allItems().filter(matches).length;state.cui=saved[0];state.main=saved[1];return n};
+  const row=(label,list,cur,key)=>{
+    const chips=[["","All"],...list].map(([k,n])=>{const c=key==="cui"?countFor(k,saved[1]):countFor(saved[0],k);
+      if(k&&!c&&cur!==k)return"";return `<button class="fchip" type="button" data-${key}="${k||"*"}" aria-pressed="${cur===k}">${esc(n)}${k?` <span class="n">${c}</span>`:""}</button>`}).join("");
+    return `<div class="frow" role="group" aria-label="${label}"><span class="lab">${label}</span>${chips}</div>`};
+  box.style.setProperty("--tc",`var(--tab-${state.tab})`);
+  box.innerHTML=row("Cuisine",CUISINES,state.cui,"cui")+row("Main ingredient",MAINS,state.main,"main");box.hidden=false;
+}
+function card(it){
+  const full=it.kind==="own"?it.rec:fullFor(it.key);
+  const fav=state.favs.has(it.key);
+  const tg=FACET_SECS.includes(it.sec)?tagOf(it):{};
+  const tags=[it.tag?`<span class="chip">${esc(it.tag)}</span>`:"",tg.cui&&tg.cui!=="OT"?`<span class="chip cui">${esc(CUINAME[tg.cui])}</span>`:"",tg.main&&tg.main!=="OT"?`<span class="chip cui">${esc(MAINNAME[tg.main])}</span>`:"",full?`<span class="chip full">Full recipe</span>`:""].join("");
+  const links=[];
+  if(full)links.push(`<button type="button" data-open="${esc(it.key)}">View recipe</button>`,`<button type="button" data-print="${esc(it.key)}">Print</button>`);
+  if(it.kind==="email"){
+    const s=SEARCH_URL[it.source];if(s&&it.tag!=="Collection")links.push(`<a href="${s}${encodeURIComponent(it.title.replace(/^This |'.*$/g,""))}" target="_blank" rel="noopener">${it.source==="MyRecipes"?"Search MyRecipes via Google":"Find on "+esc(it.source)}</a>`);
+    if(!full&&it.tag!=="Collection")links.push(`<button type="button" data-fill="${esc(it.key)}">Add full recipe</button>`);
+  }
+  if(state.db)links.push(state.hidden.has(it.key)?`<button type="button" class="del" data-restore="${esc(it.key)}">Restore</button>`:`<button type="button" class="del" data-remove="${esc(it.key)}" aria-label="Delete ${esc(it.title)}">Delete</button>`);
+  return `<article class="card${state.hidden.has(it.key)?" gone":""}" style="--tc:var(--tab-${it.sec})">
+    <div class="head"><h3>${hiTitle(it.title)}</h3>
+      <button class="star" type="button" data-star="${esc(it.key)}" aria-pressed="${fav}" aria-label="${fav?"Remove from":"Add to"} favorites" ${state.db?"":"disabled title=\"Favorites not ready\""}>${fav?"★":"☆"}</button></div>
+    <div class="meta">${tags}<span>${esc(it.source)}</span>${it.date?`<time datetime="${it.date}">${fmtDate(it.date)}</time>`:""}</div>
+    ${it.teaser?`<p class="teaser">${esc(it.teaser)}</p>`:""}
+    <div class="links">${links.join("")}</div>
+  </article>`;
+}
+function render(){
+  renderTabs();renderFacets();
+  const items=allItems().filter(matches);
+  $("status").textContent=items.length?`Showing ${items.length} ${items.length===1?"recipe":"recipes"}${state.q?` matching "${state.q}" across all sections`:""}.`:"";
+  renderWebHint();
+  if(!items.length){$("list").innerHTML=`<div class="empty">${state.showDel?"No deleted recipes here.":state.favOnly?"No starred recipes here yet. Tap the star on any card to save it as a favorite.":(facetsOn()&&(state.cui||state.main))?"No recipes match that cuisine and main ingredient. Tap All to clear one.":"Nothing in your cookbook matches that search. Try a single ingredient, like chicken or lemon, or search online below."}</div>`;return}
+  // Searching is global, even when the user had selected one section.
+  const secs=state.tab==="all"||state.q?SECTIONS.map(s=>s[0]):[state.tab];
+  $("list").innerHTML=secs.map(s=>{
+    const g=items.filter(i=>i.sec===s);if(!g.length)return"";
+    g.sort((a,b)=>(state.q?titleHit(b)-titleHit(a):0)||(state.favs.has(b.key)-state.favs.has(a.key))||(b.kind==="own")-(a.kind==="own")||b.date.localeCompare(a.date));
+    return `<section class="group" style="--tc:var(--tab-${s})"><h2>${esc(SECNAME[s])} <span class="n">${g.length}</span></h2><div class="grid">${g.map(card).join("")}</div></section>`;
+  }).join("");
+}
+
+// ---------- sheet ----------
+let lastFocus=null;
+function openSheet(html){lastFocus=document.activeElement;$("sheet").innerHTML=html;$("sheet").hidden=false;$("shade").hidden=false;const f=$("sheet").querySelector("input,textarea,button");f&&f.focus()}
+function closeSheet(){$("sheet").hidden=true;$("shade").hidden=true;$("sheet").innerHTML="";lastFocus&&lastFocus.focus&&lastFocus.focus()}
+$("shade").onclick=closeSheet;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("sheet").hidden)closeSheet()});
+
+function showRecipe(key){
+  const it=allItems().find(i=>i.key===key);const r=it.kind==="own"?it.rec:fullFor(key);if(!r)return;
+  const ing=(r.ingredients||[]).filter(Boolean),steps=(r.steps||[]).filter(Boolean);
+  openSheet(`<button class="btn close" type="button" data-close>Close</button>
+    <h2 id="sheetTitle">${esc(r.title||it.title)}</h2>
+    <div class="meta"><span class="chip" style="background:var(--tab-${r.sec||it.sec});color:var(--paper)">${esc(SECNAME[r.sec||it.sec])}</span>${(()=>{const t=tagOf(it);return [t.cui&&t.cui!=="OT"?CUINAME[t.cui]:"",t.main&&t.main!=="OT"?MAINNAME[t.main]:""].filter(Boolean).map(x=>`<span class="chip cui">${esc(x)}</span>`).join("")})()}${r.servings?`<span>Serves ${esc(r.servings)}</span>`:""}${r.time?`<span>${esc(r.time)}</span>`:""}</div>
+    ${ing.length?`<h3>Ingredients</h3><ul>${ing.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+    ${steps.length?`<h3>Steps</h3><ol>${steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>`:""}
+    ${r.notes?`<h3>Notes</h3><p>${esc(r.notes)}</p>`:""}
+    ${r.source?`<h3>Source</h3><p>${/^https?:\/\//.test(r.source)?`<a href="${esc(r.source)}" target="_blank" rel="noopener">${esc(r.source)}</a>`:esc(r.source)}</p>`:""}
+    ${getPhotoIds(r).length?`<h3>Original scanned photos (${getPhotoIds(r).length})</h3><p class="inline-note">Compressed copies kept locally. Android also writes them to Pictures/MyCookbook/Photos.</p><div class="thumbs" id="recipePhotos"></div>`:""}
+    <div class="row" style="margin-top:24px"><button class="btn primary" type="button" data-print="${esc(key)}">Save PDF</button>${ing.length?`<button class="btn" type="button" data-add-ingredients="${esc(key)}">Add to shopping list</button>`:""}<button class="btn" type="button" data-edit="${esc(r.id)}">Edit</button><button class="btn" type="button" data-del="${esc(r.id)}">${r.ref?"Remove full recipe":"Delete"}</button></div>
+    <div id="confirmBox"></div>`);
+  if(getPhotoIds(r).length)hydrateRecipePhotos(r);
+}
+// ---------- print (PDF) ----------
+const FRAC={"\u2153":"1/3","\u2154":"2/3","\u215B":"1/8","\u215C":"3/8","\u215D":"5/8","\u215E":"7/8","\u2155":"1/5","\u2159":"1/6","\u2044":"/","\u2009":" ","\u202F":" "};
+const pdfText=s=>String(s||"").replace(/[\u2153-\u215E\u2044\u2009\u202F]/g,c=>FRAC[c]||"").replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/\u2026/g,"...").replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF\u2013\u2014\u2022]/g,"");
+const SECRGB={A:[95,127,58],S:[178,106,30],M:[47,94,110],D:[156,61,90],K:[106,78,140]};
+function buildPdf(r,sec){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:"pt",format:"letter"});
+  const W=612,H=792,M=54,CW=W-2*M;let y=M;const col=SECRGB[sec]||[47,94,110];
+  const need=h=>{if(y+h>H-M-20){doc.addPage();y=M}};
+  doc.setFillColor(...col);doc.rect(M,y,36,5,"F");y+=24;
+  doc.setFont("times","bold");doc.setFontSize(24);doc.setTextColor(31,42,36);
+  doc.splitTextToSize(pdfText(r.title),CW).forEach(l=>{need(28);doc.text(l,M,y);y+=28});
+  const meta=[SECNAME[sec],r.servings?"Serves "+r.servings:"",r.time].filter(Boolean).join("   \u2022   ");
+  doc.setFont("helvetica","normal");doc.setFontSize(10.5);doc.setTextColor(93,106,98);doc.text(pdfText(meta),M,y);y+=12;
+  doc.setDrawColor(213,219,210);doc.setLineWidth(1);doc.line(M,y,W-M,y);y+=24;
+  const head=t=>{need(40);doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(...col);doc.text(t.toUpperCase(),M,y,{charSpace:1});y+=18;doc.setTextColor(31,42,36)};
+  const ing=(r.ingredients||[]).filter(Boolean),steps=(r.steps||[]).filter(Boolean);
+  if(ing.length){head("Ingredients");doc.setFont("helvetica","normal");doc.setFontSize(11.5);
+    ing.forEach(x=>{const ls=doc.splitTextToSize(pdfText(x),CW-18);need(ls.length*15+4);doc.text("\u2022",M+2,y);ls.forEach(l=>{doc.text(l,M+18,y);y+=15});y+=3});y+=14}
+  if(steps.length){head("Steps");doc.setFontSize(11.5);
+    steps.forEach((x,i)=>{const ls=doc.splitTextToSize(pdfText(x),CW-26);need(ls.length*15.5+8);doc.setFont("helvetica","bold");doc.text(String(i+1)+".",M,y);doc.setFont("helvetica","normal");ls.forEach(l=>{doc.text(l,M+26,y);y+=15.5});y+=7});y+=10}
+  if(r.notes){head("Notes");doc.setFont("times","italic");doc.setFontSize(12);doc.splitTextToSize(pdfText(r.notes),CW).forEach(l=>{need(16);doc.text(l,M,y);y+=16});y+=10}
+  const n=doc.getNumberOfPages();
+  for(let i=1;i<=n;i++){doc.setPage(i);doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(140,150,144);
+    doc.text(pdfText("My Cookbook"+(r.source?"   \u2022   "+r.source:"")).slice(0,110),M,H-30);if(n>1)doc.text(`${i} / ${n}`,W-M,H-30,{align:"right"})}
+  return doc.output("blob");
+}
+function printViaBrowser(r,it){
+  // Offline browser fallback; user selects "Save as PDF" in the print dialog.
+  const w=window.open("", "_blank");
+  if(!w){toast("Allow pop-ups to print, or connect to the internet for direct PDF download.");return}
+  const li=x=>`<li>${esc(x)}</li>`;
+  const ing=(r.ingredients||[]).filter(Boolean),steps=(r.steps||[]).filter(Boolean);
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(r.title||it.title)}</title>
+    <style>body{font:17px/1.55 Georgia,serif;margin:36px;max-width:750px;color:#222}h1{color:#9e3b1b}h2{margin-top:28px;font:700 14px sans-serif;text-transform:uppercase}li{margin:10px 0}@media print{body{margin:14mm}}</style>
+    </head><body><h1>${esc(r.title||it.title)}</h1><p>${esc(SECNAME[r.sec||it.sec]||"")}</p>
+    ${ing.length?`<h2>Ingredients</h2><ul>${ing.map(li).join("")}</ul>`:""}
+    ${steps.length?`<h2>Steps</h2><ol>${steps.map(li).join("")}</ol>`:""}
+    ${r.notes?`<h2>Notes</h2><p>${esc(r.notes)}</p>`:""}</body></html>`);
+  w.document.close();w.focus();w.print();
+}
+async function printRecipe(key,btn){
+  const it=allItems().find(i=>i.key===key);const r=it&&(it.kind==="own"?it.rec:fullFor(key));if(!r)return;
+  // On Android, generate the PDF with the native print/PDF engine, even offline.
+  if(window.CookbookAndroid?.printRecipe){window.CookbookAndroid.printRecipe(JSON.stringify({...r,title:r.title||it.title,section:SECNAME[r.sec||it.sec]}));toast("Choose where to save the PDF");return}
+  if(!window.jspdf){printViaBrowser(r,it);return}
+  
+  btn.disabled=true;
+  try{const blob=buildPdf(r,r.sec||it.sec);
+    await state.downloads.save({filename:(r.title||it.title).replace(/[\\/:*?"<>|]+/g,"").slice(0,80).trim()+".pdf",data:blob});
+    toast("PDF downloaded. Open it and print.")}
+  catch(x){const c=x&&x.code;if(c!=="declined")toast(c==="rate_limited"?"A save is already open. Finish that one first.":"Couldn't make the PDF. Try again.")}
+  finally{btn.disabled=false}
+}
+
+// ---------- add: chooser and link (photo scan with on-device OCR) ----------
+function showChooser(opts){
+  const base=opts.ref?BASE.find(b=>b.key===opts.ref):null;
+  openSheet(`<button class="btn close" type="button" data-close>Close</button>
+    <h2 id="sheetTitle">${base?"Add the full recipe":"Add a recipe"}</h2>
+    ${base?`<p class="teaser">${esc(base.title)}</p>`:`<p class="teaser">Pick how you want to add it. You can check and fix everything before it's saved.</p>`}
+    <div class="choices">
+      <button class="choice" type="button" data-mode="manual"><span class="ic">Aa</span><b>Type it in</b><span class="d">Fill in the name, ingredients and steps yourself.</span></button>
+      <button class="choice" type="button" data-mode="scan"><span class="ic">📷</span><b>Scan a recipe photo</b><span class="d">Use your camera or a saved photo. Read the text, check it, and fill the recipe form.</span></button>
+      <button class="choice" type="button" data-mode="link"><span class="ic">www</span><b>Save a link</b><span class="d">Save the recipe's web address, then type in what you want to keep.</span></button>
+    </div>`);
+  $("sheet").querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
+    if(b.dataset.mode==="manual")showForm({ref:opts.ref});
+    else if(b.dataset.mode==="scan")showScan(opts);
+    else showLink(opts);
+  });
+}
+
+// Photo scanning: Android uses bundled ML Kit; ordinary browsers may load
+// Tesseract.js on demand. Both OCR engines process the photo on the device.
+// OCR is advisory only: the user reviews and edits everything before saving.
+// Photo bytes are kept OUT of localStorage, in IndexedDB, to protect recipe data
+// from browser storage quota exhaustion. The existing myCookbook.v1 key stays intact.
+const PHOTO_DATABASE="RedDirtCookbookPhotoStorage", PHOTO_STORE="photos";
+const PHOTO_MAX_PAGES=8, PHOTO_BACKUP_MAX_BYTES=24*1024*1024;
+let cookbookPhotoDirectory=null;
+let photoDatabasePromise=null;
+function photoDatabase(){
+  if(photoDatabasePromise)return photoDatabasePromise;
+  photoDatabasePromise=new Promise((resolve,reject)=>{
+    if(!window.indexedDB){reject(new Error("Image storage is unavailable on this device"));return}
+    const request=indexedDB.open(PHOTO_DATABASE,1);
+    request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains(PHOTO_STORE))request.result.createObjectStore(PHOTO_STORE)};
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error||new Error("Could not open image storage"));
+    request.onblocked=()=>reject(new Error("Image storage is busy"));
+  }).catch(e=>{photoDatabasePromise=null;throw e});
+  return photoDatabasePromise;
+}
+async function photoTransaction(mode,action){
+  const db=await photoDatabase();
+  return new Promise((resolve,reject)=>{
+    const t=db.transaction(PHOTO_STORE,mode),store=t.objectStore(PHOTO_STORE);
+    let request;
+    try{request=action(store)}catch(e){reject(e);return}
+    let result;
+    request.onsuccess=()=>{result=request.result};
+    request.onerror=()=>reject(request.error||new Error("Image storage failed"));
+    t.oncomplete=()=>resolve(result);
+    t.onabort=()=>reject(t.error||new Error("Image storage was interrupted"));
+  });
+}
+function photoPut(id,dataUrl){return photoTransaction("readwrite",s=>s.put(dataUrl,id))}
+function photoGet(id){return photoTransaction("readonly",s=>s.get(id))}
+function photoDrop(id){return photoTransaction("readwrite",s=>s.delete(id))}
+function photoId(){return "photo-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,12)}
+function photoIdSafe(id){return /^photo-[a-z0-9-]{7,55}$/.test(id)}
+const cookbookPhotoCopyStatus=new Map();
+window.CookbookPhotoStorage={
+  photoCopyResult(id,success,message){
+    cookbookPhotoCopyStatus.set(id,success?"Saved to Pictures/MyCookbook/Photos":String(message||"Could not copy to phone folder"));
+    if(!success)toast("Recipe saved, but phone photo copy failed. Use Download photo in the recipe.");
+  }
+};
+async function savePhotoFolderCopy(id,dataUrl){
+  if(window.CookbookAndroid?.storeRecipePhoto){
+    window.CookbookAndroid.storeRecipePhoto(id,dataUrl.split(",")[1]);
+    return;
+  }
+  if(cookbookPhotoDirectory){
+    const file=await cookbookPhotoDirectory.getFileHandle("cookbook-"+id+".jpg",{create:true});
+    const writer=await file.createWritable();
+    try{await writer.write(await (await fetch(dataUrl)).blob());await writer.close()}
+    catch(e){try{await writer.abort()}catch(_){}throw e}
+  }
+}
+function getPhotoIds(r){return Array.isArray(r?.photoIds)?r.photoIds.filter(photoIdSafe):[]}
+async function hydrateRecipePhotos(r){
+  const ids=getPhotoIds(r),target=$("recipePhotos");if(!target)return;
+  for(let i=0;i<ids.length;i++){
+    const id=ids[i];
+    try{
+      const dataUrl=await photoGet(id);
+      if(!target.isConnected)return;
+      const el=document.createElement("div");el.className="thumb";
+      if(!dataUrl){
+        el.textContent="Photo "+(i+1)+" unavailable on this device (restore a full backup).";
+      }else{
+        const pic=document.createElement("img");pic.alt="Scanned recipe page "+(i+1);
+        pic.src=dataUrl;pic.style.cssText="width:110px;height:140px;object-fit:contain";
+        const dl=document.createElement("button");dl.className="btn";dl.type="button";
+        dl.textContent="Download photo "+(i+1);dl.style.cssText="display:block;margin-top:6px;font-size:.78rem";
+        dl.onclick=()=>downloadStoredPhoto(id,r.title,i+1);
+        el.append(pic,dl);
+      }
+      target.appendChild(el);
+    }catch(_){if(target.isConnected)target.append("Could not read recipe photo "+(i+1)+".")}
+  }
+}
+async function downloadStoredPhoto(id,title,page){
+  const img=await photoGet(id);if(!img){toast("Photo not found in this installation");return}
+  const safe=(title||"recipe").replace(/[^a-z0-9 -]/gi,"").trim().slice(0,36).replace(/\s+/g,"-")||"recipe";
+  if(window.CookbookAndroid?.saveBase64){
+    window.CookbookAndroid.saveBase64("image/jpeg",safe+"-page-"+page+".jpg",img.split(",")[1]);
+    return;
+  }
+  const link=document.createElement("a");link.href=img;link.download=safe+"-page-"+page+".jpg";
+  document.body.appendChild(link);link.click();link.remove();
+}
+async function chooseCookbookPhotoDirectory(){
+  if(!window.showDirectoryPicker){toast("Folder selection isn't supported here. Android automatically saves a Pictures copy.");return}
+  try{
+    const base=await window.showDirectoryPicker({mode:"readwrite",startIn:"pictures"});
+    const app=base.name==="MyCookbook"?base:await base.getDirectoryHandle("MyCookbook",{create:true});
+    cookbookPhotoDirectory=await app.getDirectoryHandle("Photos",{create:true});
+    $("photoFolderStatus").textContent="Folder selected for future scans. Existing scans can be downloaded from their recipe.";
+  }catch(e){if(e.name!=="AbortError")$("photoFolderStatus").textContent="Couldn't select that folder. You can download photos individually."}
+}
+let activeRecipeScan=null;
+let scanSequence=0;
+let tesseractLoad=null;
+const TESSERACT_CDN="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+function loadTesseract(){
+  if(window.Tesseract?.createWorker)return Promise.resolve();
+  if(tesseractLoad)return tesseractLoad;
+  tesseractLoad=new Promise((resolve,reject)=>{
+    const tag=document.createElement("script");tag.src=TESSERACT_CDN;
+    tag.onload=()=>window.Tesseract?.createWorker?resolve():reject(new Error("OCR library unavailable"));
+    tag.onerror=()=>reject(new Error("Couldn't load the browser OCR engine. Check your internet connection."));
+    document.head.appendChild(tag);
+  }).catch(e=>{tesseractLoad=null;throw e});
+  return tesseractLoad;
+}
+function cleanScanLines(text){
+  return String(text||"").replace(/\r/g,"").split("\n").map(x=>x.replace(/[\u2022\u00b7]/g," ").replace(/\s+/g," ").trim()).filter(Boolean);
+}
+// Recipe cards often have NO printed "Ingredients" or "Directions" labels.
+// Recognize clear quantity lines and cooking verbs rather than dumping the
+// complete scan into Notes. Ambiguous lines stay editable in Notes.
+const RECIPE_ACTION=/^(?:preheat|mix|stir|combine|place|put|bake|roast|cook|simmer|heat|pour|add|bring|remove|let|serve|fold|boil|chill|beat|sprinkle|arrange|transfer|drain|marinate|spread|season|turn|brown|blend|brush|reduce|slice|cut|cover|whisk|grease|saute|saut[eé]|refrigerate|set|flip|top|roll|knead|divide|line|fill|spoon|strain|peel|chop|mince|melt|wash|rinse|coat|baste|scrape|allow|rest|reserve|repeat|place)\b/i;
+function looksLikeDirection(line){
+  const unnumbered=String(line).replace(/^(?:step\s*)?\d{1,2}[.)]\s+(?=[A-Za-z])/,"").trim();
+  return RECIPE_ACTION.test(unnumbered);
+}
+function looksLikeIngredient(line){
+  const s=String(line).trim().replace(/^[-*]\s*/,"");
+  if(looksLikeDirection(s)||/^(?:step\s*)?\d{1,2}[.)]\s+[A-Za-z]/i.test(s))return false;
+  const qty=s.match(/^(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?|[¼½¾⅓⅔⅛⅜⅝⅞])(?:\s*[-–]\s*(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?))?/);
+  if(!qty)return false;
+  const tail=s.slice(qty[0].length).trim();
+  if(!tail||/^[°%:()\d]/.test(tail)||/^[.)]\s+[A-Za-z]/.test(tail))return false;
+  if(/^(?:seconds?|secs?|minutes?|mins?|hours?|hrs?|degrees?|°[CF])\b/i.test(tail))return false;
+  return /^[A-Za-z(]/.test(tail);
+}
+function recipeFromScan(text,opts={}){
+  const base=opts.ref?BASE.find(x=>x.key===opts.ref):null;
+  const lines=cleanScanLines(text);
+  const ing=/^(ingredients?|what you(?:'|’)ll need|you will need)\s*[:.\-]?\s*$/i;
+  const steps=/^(directions?|instructions?|method|preparation|procedure|steps?|how to make it)\s*[:.\-]?\s*$/i;
+  const extras=/^(notes?|tips?|nutrition|yield|serves|recipe by)\s*[:.\-]?\s*$/i;
+  let section="heading",title="",ingredients=[],directions=[],notes=[];
+  let foundIngredientHeading=false,foundStepsHeading=false;
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    if(ing.test(line)){section="ingredients";foundIngredientHeading=true;continue}
+    if(steps.test(line)){section="steps";foundStepsHeading=true;continue}
+    if(extras.test(line)){section="notes";continue}
+    if(section==="notes"){notes.push(line);continue}
+    // Explicit headings take priority, but detect a missing Directions heading.
+    // This is common for handwritten cards with ingredients followed by prose.
+    if(section==="ingredients"&&looksLikeDirection(line)){section="steps";directions.push(line);continue}
+    if(section==="ingredients"){ingredients.push(line);continue}
+    if(section==="steps"){
+      if(looksLikeIngredient(line)&&!foundIngredientHeading){ingredients.push(line);continue}
+      directions.push(line);continue;
+    }
+    if(looksLikeIngredient(line)){section="ingredients";ingredients.push(line);continue}
+    if(looksLikeDirection(line)){section="steps";directions.push(line);continue}
+    if(!title&&!base&&i===0&&!/^recipe\s*(?:card|#\d+)?$/i.test(line)){title=line;continue}
+    if(/^\s*(?:and|then|until|for|over|with|in|on|at)\b/i.test(line)&&directions.length){
+      directions[directions.length-1]+=" "+line;continue;
+    }
+    notes.push(line); // Never discard OCR text we cannot confidently categorize.
+  }
+  if(base)title=base.title;
+  // Highlight possible OCR errors WITHOUT silently editing recipe measurements.
+  // E.g. "3 1/2-44 lb" should be reviewed against the actual card/photo.
+  const warnings=ingredients.filter(x=>/\b\d+\s+\d+\/\d+\s*[-–]\s*\d{2,}\s*(?:lb|lbs|pounds?|oz|kg)\b/i.test(x));
+  return {title,sec:base?.sec||"M",ingredients,directions,notes,
+    foundIngredientHeading,foundStepsHeading,warnings};
+}
+// Scoped public callback: invoked only by the local, bundled Android bridge.
+window.CookbookRecipeScan={
+  receive(requestId,text,error){
+    const scan=activeRecipeScan;
+    if(!scan||scan.pending!==requestId||!$("scanRaw"))return;
+    scan.pending="";
+    if(error){showScanError(error);return}
+    acceptScanText(text);
+  }
+};
+function showScanError(message){
+  const el=$("scanStatus");if(!el)return;
+  el.textContent=message;el.style.color="var(--accent)";
+}
+function acceptScanText(raw){
+  const scan=activeRecipeScan,el=$("scanRaw");if(!scan||!el)return;
+  const existing=el.value.trim();
+  const fresh=String(raw||"").trim();
+  if(!fresh){showScanError("No text found in this photo. Try brighter lighting and a straight-on photo, or type it manually.");return}
+  el.value=existing?existing+"\n\n"+fresh:fresh;
+  $("scanStatus").textContent="Text detected. Check it below. Scan another page if needed, or autofill the recipe.";
+  $("scanStatus").style.color="";
+  $("scanToForm").disabled=false;
+  el.focus();
+}
+function scanImageData(file){
+  return new Promise((resolve,reject)=>{
+    const image=new Image();const url=URL.createObjectURL(file);
+    image.onload=()=>{
+      URL.revokeObjectURL(url);
+      try{
+        const factor=Math.min(1,2200/Math.max(image.naturalWidth,image.naturalHeight));
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.max(1,Math.round(image.naturalWidth*factor));
+        canvas.height=Math.max(1,Math.round(image.naturalHeight*factor));
+        const c=canvas.getContext("2d");c.fillStyle="#fff";c.fillRect(0,0,canvas.width,canvas.height);
+        c.drawImage(image,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL("image/jpeg",.78));
+      }catch(e){reject(new Error("Could not prepare this photo."))}
+    };
+    image.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("The selected photo could not be opened."))};
+    image.src=url;
+  });
+}
+async function scanSelectedPhoto(file){
+  if(!file||!$("scanRaw"))return;
+  if(!file.type.startsWith("image/")){showScanError("Choose a JPEG, PNG, or other supported photo.");return}
+  if(file.size>18*1024*1024){showScanError("Photo exceeds 18 MB. Choose a smaller image.");return}
+  const scan=activeRecipeScan;if(!scan)return;
+  if(scan.photos.length>=PHOTO_MAX_PAGES){showScanError("Maximum of eight scanned photos per recipe.");return}
+  const seq=++scanSequence;
+  const req="scan-"+seq;
+  scan.pending=req;
+  const status=$("scanStatus");
+  status.style.color="";status.textContent="Reading the recipe photo…";
+  try{
+    const imageData=await scanImageData(file);
+    if(scan!==activeRecipeScan||scan.pending!==req)return;
+    // Keep the compressed image even if OCR fails; the user may type it manually.
+    scan.photos.push({id:photoId(),dataUrl:imageData});
+    renderScanPhotos();
+    if(window.CookbookAndroid?.scanImageBase64){
+      window.CookbookAndroid.scanImageBase64(req,imageData.split(",")[1]);
+      return;  // Native Android callback finishes through CookbookRecipeScan.receive.
+    }
+    status.textContent="Loading OCR and reading this photo on your device…";
+    await loadTesseract();
+    if(scan!==activeRecipeScan||scan.pending!==req)return;
+    const worker=await window.Tesseract.createWorker("eng");
+    try{
+      const result=await worker.recognize(imageData);
+      if(scan===activeRecipeScan&&scan.pending===req)window.CookbookRecipeScan.receive(req,result?.data?.text||"","");
+    }finally{await worker.terminate()}
+  }catch(e){
+    if(scan===activeRecipeScan&&scan.pending===req){scan.pending="";showScanError(e.message||"Photo scanning failed. You can enter the recipe manually.")}
+  }
+}
+function renderScanPhotos(){
+  const scan=activeRecipeScan,preview=$("scanPhotoPreview"),counter=$("scanPhotoCount");
+  if(!scan||!preview)return;
+  counter.textContent=scan.photos.length+" / "+PHOTO_MAX_PAGES+" images queued for this recipe";
+  preview.replaceChildren();
+  scan.photos.forEach((p,i)=>{
+    const item=document.createElement("span");item.className="thumb";
+    const img=document.createElement("img");img.src=p.dataUrl;img.alt="Recipe scan page "+(i+1);
+    const remove=document.createElement("button");remove.type="button";remove.className="tx";
+    remove.textContent="×";remove.setAttribute("aria-label","Remove scanned page "+(i+1));
+    remove.onclick=()=>{scan.photos.splice(i,1);renderScanPhotos()};
+    item.append(img,remove);preview.append(item);
+  });
+}
+function showScan(opts={}){
+  activeRecipeScan={opts,pending:"",photos:[]};
+  openSheet(`<button class="btn close" type="button" data-close>Close</button>
+    <h2 id="sheetTitle">Scan a recipe photo</h2>
+    <p class="teaser">Photograph a recipe card or cookbook page, or choose a photo already on your device. You can scan additional pages before saving.</p>
+    <p class="inline-note">Up to eight photos are compressed and attached to the saved recipe. Android also copies them to Pictures/MyCookbook/Photos. Photos are included in full JSON backups. Check all OCR measurements and temperatures before saving.</p>
+    <div class="row" style="margin:16px 0">
+      <label class="filebtn btn primary">📷 Take photo<input id="scanCamera" type="file" accept="image/*" capture="environment" aria-label="Take a recipe photo"></label>
+      <label class="filebtn btn">Choose photo<input id="scanGallery" type="file" accept="image/*" aria-label="Choose a recipe photo"></label>
+    </div>
+    <p class="inline-note">Android: built-in offline text recognition. Browser: OCR engine downloads when first needed; text recognition runs on your device.</p>
+    <p id="scanPhotoCount" class="tcount">0 / 8 images queued for this recipe</p>
+    <div class="thumbs" id="scanPhotoPreview"></div>
+    <p id="scanStatus" role="status" class="inline-note">Select a clear, well-lit photo to begin.</p>
+    <label class="form" for="scanRaw">Recognized text (editable)
+      <textarea id="scanRaw" style="min-height:225px" placeholder="Scanned recipe text appears here. You can also paste text or correct recognition mistakes."></textarea>
+    </label>
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="scanToForm" type="button" disabled>Auto-fill recipe fields</button>
+      <button class="btn" type="button" id="scanManual">Type instead</button>
+    </div>`);
+  ["scanCamera","scanGallery"].forEach(id=>$(id).addEventListener("change",e=>{
+    const file=e.target.files?.[0];e.target.value="";if(file)scanSelectedPhoto(file);
+  }));
+  $("scanRaw").addEventListener("input",()=>{$("scanToForm").disabled=!$("scanRaw").value.trim()});
+  $("scanManual").onclick=()=>showForm({ref:opts.ref,photoStaging:[...activeRecipeScan.photos]});
+  $("scanToForm").onclick=()=>{
+    const raw=$("scanRaw").value.trim();if(!raw)return;
+    const parsed=recipeFromScan(raw,opts);
+    const notes=parsed.notes.join("\n");
+    const reviewSummary=`Auto-filled ${parsed.ingredients.length} ingredient(s) and ${parsed.directions.length} step(s).`+
+      (!parsed.title?" Enter the recipe name.":"")+
+      (parsed.notes.length?` ${parsed.notes.length} uncertain line(s) are in Notes.`:"")+
+      (parsed.warnings.length?` Possible OCR amount error: ${parsed.warnings.join("; ")}.`:"")+
+      " Compare all measurements, temperatures and instructions with the original photo before saving.";
+    showForm({ref:opts.ref,pre:{title:parsed.title,sec:parsed.sec,
+      ingredients:parsed.ingredients,steps:parsed.directions,
+      notes,source:"Scanned recipe photo"},photoStaging:[...activeRecipeScan.photos],
+      ocrText:raw,banner:reviewSummary});
+  };
+}
+
+function renderWebHint(){const box=$("webhint");box.hidden=true;box.innerHTML=""}
+
+function showLink(opts){
+  openSheet(`<button class="btn close" type="button" data-close>Close</button>
+    <h2 id="sheetTitle">Save a link</h2>
+    <form class="form" id="linkForm" novalidate>
+      <label for="l-url">Recipe link<input id="l-url" type="url" inputmode="url" placeholder="https://sallysbakingaddiction.com/..."></label>
+      <p class="err" id="l-err" hidden></p>
+      <div class="row"><button class="btn primary" type="submit" id="l-plain">Continue</button></div>
+    </form>`);
+  const url=()=>$("l-url").value.trim();
+  const err=t=>{$("l-err").textContent=t;$("l-err").hidden=!t};
+  $("linkForm").onsubmit=e=>{e.preventDefault();err("");const u=url();
+    if(!/^https?:\/\/\S+\.\S+/.test(u)){err("Enter the full web address, starting with https://");return}
+    let t="";try{t=decodeURIComponent(new URL(u).pathname.split("/").filter(s=>s&&!/^\d+$/.test(s)).pop()||"").replace(/-recipe.*$|-\d+$/g,"").replace(/[-_]+/g," ").replace(/\b\w/g,c=>c.toUpperCase())}catch(_){}
+    showForm({ref:opts.ref,pre:{title:t,source:u},banner:"Check the name. You can add ingredients and steps now or later."})};
+  if(opts.url)$("l-url").value=opts.url;
+}
+
+function showForm(opts){
+  const r=opts.rec||opts.pre||{};const base=(opts.ref||r.ref)?BASE.find(b=>b.key===(opts.ref||r.ref)):null;
+  
+  const title=r.title||(base?base.title:"");const sec=r.sec||(base?base.sec:"M");
+  const bt=base?(TAGS[base.title]||["",""]):["",""];const cui=r.cuisine||bt[0]||"",mn=r.main||bt[1]||"";
+  const opt=(list,cur)=>`<option value="">Not set</option>`+list.map(([k,n])=>`<option value="${k}" ${k===cur?"selected":""}>${esc(n)}</option>`).join("");
+  openSheet(`<button class="btn close" type="button" data-close>Close</button>
+    <h2 id="sheetTitle">${opts.rec?"Edit recipe":opts.pre?"Check and save":base?"Add the full recipe":"Add a recipe"}</h2>
+    ${opts.banner?`<p class="banner">${esc(opts.banner)}</p>`:""}
+    ${opts.ocrText?`<details style="margin:12px 0"><summary>Review original recognized text</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;padding:12px;background:var(--chip);border-radius:8px">${esc(opts.ocrText)}</pre></details>`:""}
+    ${base&&!opts.pre&&!opts.rec?`<p class="teaser">Find this recipe on the recipe site, then paste its link or copy the ingredients and steps here.</p>`:""}
+    <form class="form" id="recForm" novalidate>
+      <label for="f-title">Recipe name<input id="f-title" required value="${esc(title)}"></label>
+      <label for="f-sec">Section<select id="f-sec">${SECTIONS.map(([k,n])=>`<option value="${k}" ${k===sec?"selected":""}>${esc(n)}</option>`).join("")}</select></label>
+      <div class="row"><label for="f-cui" style="flex:1 1 180px">Cuisine<select id="f-cui">${opt(CUISINES,cui)}</select></label>
+        <label for="f-main" style="flex:1 1 160px">Main ingredient<select id="f-main">${opt(MAINS,mn)}</select></label></div>
+      <div class="row"><label for="f-serv" style="flex:1 1 120px">Servings<input id="f-serv" value="${esc(r.servings||"")}" placeholder="6"></label>
+        <label for="f-time" style="flex:2 1 180px">Time<input id="f-time" value="${esc(r.time||"")}" placeholder="Prep 10 min, cook 35 min"></label></div>
+      <label for="f-ing">Ingredients <span class="hint">One per line</span><textarea id="f-ing" placeholder="1 (10.5 oz) can cream of chicken soup&#10;1 cup cottage cheese">${esc((r.ingredients||[]).join("\n"))}</textarea></label>
+      <label for="f-steps">Steps <span class="hint">One per line, in order</span><textarea id="f-steps" placeholder="Preheat the oven to 350°F.&#10;Mix the filling…">${esc((r.steps||[]).join("\n"))}</textarea></label>
+      <label for="f-notes">Notes <span class="hint">Optional: tweaks, who loved it</span><textarea id="f-notes" style="min-height:70px">${esc(r.notes||"")}</textarea></label>
+      <label for="f-src">Source <span class="hint">Optional: a link or "Grandma's card"</span><input id="f-src" value="${esc(r.source||"")}"></label>
+      ${opts.photoStaging?.length?`<div class="banner">${opts.photoStaging.length} compressed scan photo(s) will be attached when you save this recipe.</div>`:""}
+      ${getPhotoIds(r).length?`<p class="inline-note">${getPhotoIds(r).length} existing saved recipe photos will be preserved.</p>`:""}
+      <p class="err" id="f-err" hidden></p>
+      <div class="row"><button class="btn primary" type="submit" id="f-save">Save recipe</button><button class="btn" type="button" data-close>Cancel</button></div>
+    </form>`);
+  $("recForm").onsubmit=async e=>{
+    e.preventDefault();
+    const lines=id=>$(id).value.split("\n").map(s=>s.replace(/^\s*(?:[-•*]|\d+[.)])\s*/,"").trim()).filter(Boolean);
+    const data={title:$("f-title").value.trim(),sec:$("f-sec").value,cuisine:$("f-cui").value,main:$("f-main").value,servings:$("f-serv").value.trim(),time:$("f-time").value.trim(),
+      ingredients:lines("f-ing"),steps:lines("f-steps"),notes:$("f-notes").value.trim(),source:$("f-src").value.trim(),
+      ref:r.ref||opts.ref||"",photoIds:[...new Set([...getPhotoIds(r),...(opts.photoStaging||[]).map(p=>p.id)])],
+      createdAt:r.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};
+    const err=$("f-err");
+    if(!data.title){err.textContent="Give the recipe a name.";err.hidden=false;return}
+    if(!data.ingredients.length&&!data.steps.length&&!/^https?:\/\//.test(data.source)){err.textContent="Add the ingredients or the steps, or a link in Source.";err.hidden=false;return}
+    $("f-save").disabled=true;
+    const staged=opts.photoStaging||[];
+    const stored=[];
+    try{
+      for(const photo of staged){await photoPut(photo.id,photo.dataUrl);stored.push(photo.id)}
+      const ref=r.id?state.db.collection("recipes").doc(r.id):state.db.collection("recipes").doc();
+      await ref.set(data);
+      closeSheet();toast(staged.length?"Recipe and scanned photos saved":"Recipe saved");
+      for(const photo of staged){
+        savePhotoFolderCopy(photo.id,photo.dataUrl).catch(()=>toast("Photo saved in cookbook; folder copy failed. Download it from the recipe."));
+      }
+    }catch(x){
+      for(const id of stored)await photoDrop(id).catch(()=>{});
+      err.textContent="Couldn't save the recipe and photos. Check available storage and retry. " +(x?.message||"");
+      err.hidden=false;$("f-save").disabled=false;
+    }
+  };
+}
+
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-cui],[data-main],[data-tab],[data-star],[data-open],[data-fill],[data-close],[data-edit],[data-del],[data-del-yes],[data-remove],[data-remove-yes],[data-restore],[data-print],[data-add-ingredients],[data-shop-toggle],[data-shop-remove],[data-shop-clear]");if(!t)return;
+  if(t.dataset.cui){const v=t.dataset.cui==="*"?"":t.dataset.cui;state.cui=state.cui===v?"":v;render();return}
+  if(t.dataset.main){const v=t.dataset.main==="*"?"":t.dataset.main;state.main=state.main===v?"":v;render();return}
+  if(t.dataset.tab){state.tab=t.dataset.tab;try{localStorage.setItem("cb-tab",state.tab)}catch(_){}render();return}
+  if(t.hasAttribute("data-close")){closeSheet();return}
+  if(t.dataset.open){showRecipe(t.dataset.open);return}
+  if(t.dataset.fill){showChooser({ref:t.dataset.fill});return}
+  if(t.dataset.edit){showForm({rec:state.added.find(r=>r.id===t.dataset.edit)});return}
+  if(t.dataset.del){$("confirmBox").innerHTML=`<div class="confirm" style="margin-top:14px"><b>${state.added.find(r=>r.id===t.dataset.del)?.ref?"Remove the written-out recipe? The email card stays.":"Delete this recipe from this device?"}</b><div class="row"><button class="btn primary" type="button" data-del-yes="${esc(t.dataset.del)}">Delete</button><button class="btn" type="button" data-close>Keep it</button></div></div>`;return}
+  if(t.dataset.print){printRecipe(t.dataset.print,t);return}
+  if(t.dataset.addIngredients){await addShoppingFromRecipe(t.dataset.addIngredients);return}
+  if(t.dataset.shopToggle){const row=state.shopping.find(x=>x.id===t.dataset.shopToggle);if(row)await state.db.collection("shopping").doc(row.id).set({...row,checked:!row.checked});return}
+  if(t.dataset.shopRemove){await state.db.collection("shopping").doc(t.dataset.shopRemove).delete();return}
+  if(t.hasAttribute("data-shop-clear")){for(const item of state.shopping.filter(x=>x.checked))await state.db.collection("shopping").doc(item.id).delete();toast("Checked items cleared");return}
+  if(t.dataset.remove){const it=allItems().find(i=>i.key===t.dataset.remove);if(!it)return;
+    openSheet(`<h2 id="sheetTitle">Delete this recipe?</h2><p><b>${esc(it.title)}</b></p>
+      <p class="teaser">${it.kind==="own"?"This deletes the recipe you added from this device. Make a backup first if you want to keep it.":"This takes it out of your cookbook. You can bring it back any time with Show deleted."}</p>
+      <div class="row" style="margin-top:18px"><button class="btn primary" type="button" data-remove-yes="${esc(it.key)}">Delete</button><button class="btn" type="button" data-close>Keep it</button></div>`);return}
+  if(t.dataset.removeYes){const it=allItems().find(i=>i.key===t.dataset.removeYes);closeSheet();if(!it)return;
+    try{
+      if(it.kind==="own"){const {id,...body}=it.rec;const ref=state.db.collection("recipes").doc(id);await ref.delete();
+        toast("Recipe deleted","Undo",()=>ref.set(body).then(()=>toast("Recipe restored")).catch(()=>toast("Couldn't undo. Add it again.")))}
+      else{const ref=state.db.collection("hidden").doc(it.key);await ref.set({at:new Date().toISOString(),title:it.title});
+        toast("Recipe deleted","Undo",()=>ref.delete().then(()=>toast("Recipe restored")).catch(()=>toast("Couldn't undo. Use Show deleted.")))}
+      if(state.favs.has(it.key))state.db.collection("favorites").doc(it.key).delete().catch(()=>{});
+    }catch(x){toast("Couldn't delete from this device. Try again.")}return}
+  if(t.dataset.restore){try{await state.db.collection("hidden").doc(t.dataset.restore).delete();toast("Recipe restored")}catch(_){toast("Couldn't restore. Try again.")}return}
+  if(t.dataset.delYes){try{await state.db.collection("recipes").doc(t.dataset.delYes).delete();closeSheet();toast("Recipe deleted")}catch(_){toast("Couldn't delete. Try again.")}return}
+  if(t.dataset.star){if(!state.db)return;const k=t.dataset.star;const on=!state.favs.has(k);
+    on?state.favs.add(k):state.favs.delete(k);render();
+    try{const d=state.db.collection("favorites").doc(k);on?await d.set({on:true,at:new Date().toISOString()}):await d.delete()}
+    catch(x){on?state.favs.delete(k):state.favs.add(k);render();toast("Couldn't update favorites on this device")}}
+});
+// External links open in the device browser, never in the privileged app WebView.
+document.addEventListener("click",e=>{
+  if(!window.CookbookAndroid?.openExternal)return;
+  const a=e.target.closest("a[href]");
+  if(!a)return;
+  const u=a.getAttribute("href");
+  if(/^https?:\/\//i.test(u)){e.preventDefault();window.CookbookAndroid.openExternal(u)}
+});
+$("addBtn").onclick=()=>showChooser({});
+$("shopBtn").onclick=showShopping;
+$("dataBtn").onclick=showDataTools;
+$("q").addEventListener("input",e=>{state.q=e.target.value.trim();render()});
+$("favOnly").onchange=e=>{state.favOnly=e.target.checked;render()};
+$("hideColl").onchange=e=>{state.hideColl=e.target.checked;render()};
+$("showDel").onchange=e=>{state.showDel=e.target.checked;render()};
+
+// ---------- shopping list + export/import ----------
+async function addShoppingFromRecipe(key){
+  const it=allItems().find(x=>x.key===key);const r=it&&(it.kind==="own"?it.rec:fullFor(key));
+  if(!r)return;
+  const already=new Set(state.shopping.map(x=>(x.text||"").trim().toLowerCase()));
+  let count=0;
+  try{
+    for(const raw of (r.ingredients||[])){
+      const text=String(raw).trim();if(!text||already.has(text.toLowerCase()))continue;
+      await state.db.collection("shopping").doc().set({text,checked:false,source:r.title||it.title,addedAt:new Date().toISOString()});
+      already.add(text.toLowerCase());count++;
+    }
+    showShopping();toast(count?`${count} ingredients added to shopping list`:"Those ingredients are already on your list");
+  }catch(_){toast("Couldn't save shopping items. Check device storage.")}
+}
+function showShopping(){
+  const arr=[...state.shopping].sort((a,b)=>Number(a.checked)-Number(b.checked)||String(a.text).localeCompare(String(b.text)));
+  openSheet(`<button class="btn close" type="button" data-close>Close</button><h2 id="sheetTitle">Shopping list</h2>
+    <p class="inline-note">Build your list from a full recipe using “Add to shopping list,” or type in a grocery item below. Items stay on this device and are included in your backup.</p>
+    <form id="shoppingAddForm" class="row" style="margin:12px 0 18px">
+      <input id="shoppingNewItem" maxlength="250" placeholder="Add a grocery item" aria-label="Grocery item" style="flex:1;min-width:160px;padding:10px;border:1px solid var(--line);border-radius:8px">
+      <button class="btn primary" type="submit">Add item</button>
+    </form>
+    <div id="shoppingPanel">${arr.length?`<ul class="shopping-items">${arr.map(r=>`<li class="${r.checked?"checked":""}"><label><input type="checkbox" data-shop-toggle="${esc(r.id)}" ${r.checked?"checked":""}><span>${esc(r.text)}</span></label><button type="button" data-shop-remove="${esc(r.id)}" aria-label="Remove ${esc(r.text)}">✕</button></li>`).join("")}</ul>`:'<div class="empty">Your shopping list is empty.</div>'}
+    ${arr.some(x=>x.checked)?'<button class="btn" type="button" data-shop-clear>Clear checked items</button>':""}</div>`);
+  $("shoppingAddForm").onsubmit=async e=>{
+    e.preventDefault();
+    const input=$("shoppingNewItem"),text=input.value.trim();
+    if(!text)return;
+    if(state.shopping.some(x=>String(x.text).toLowerCase()===text.toLowerCase())){toast("That item is already on your list");return}
+    try{await state.db.collection("shopping").doc().set({text,checked:false,source:"Manual",addedAt:new Date().toISOString()})}
+    catch(_){toast("Could not save that item on this device")}
+  };
+}
+async function exportBackup(){
+  const payload=state.db.exportData();
+  const ids=[...new Set(state.added.flatMap(getPhotoIds))];
+  payload.photos={};
+  for(const id of ids){
+    const dataUrl=await photoGet(id);
+    if(!dataUrl)throw new Error("A saved recipe photo is missing. Re-add it before making a complete backup.");
+    payload.photos[id]=dataUrl;
+  }
+  const json=JSON.stringify(payload,null,2);
+  if(json.length>PHOTO_BACKUP_MAX_BYTES)throw new Error("Full photo backup exceeds 24 MB. Export fewer photos or use smaller scans.");
+  await state.downloads.save({filename:"my-cookbook-full-backup-"+new Date().toISOString().slice(0,10)+".json",data:new Blob([json],{type:"application/json"})});
+  toast(window.CookbookAndroid?.saveBase64?"Choose where to save your full backup.":"Full backup downloaded, including saved photos.");
+}
+function showDataTools(){
+  const d=state.db.exportData().data;
+  openSheet(`<button class="btn close" type="button" data-close>Close</button><h2 id="sheetTitle">Backup and restore</h2>
+    <p>Recipes, favorites, hidden cards and shopping items stay on this device. Scanned photos are kept separately from recipe text to avoid filling browser storage; the full JSON backup includes photo data. Android also copies photos into your phone's <strong>Pictures/MyCookbook/Photos</strong> folder. Nothing is automatically synced to cloud storage.</p>
+    <div class="banner"><strong>Current data:</strong> ${Object.keys(d.recipes).length} full or added recipes · ${Object.keys(d.favorites).length} favorites · ${Object.keys(d.shopping).length} shopping items.</div>
+    <h3>Photo storage</h3><p class="inline-note">Android: compressed copies are created automatically in Pictures/MyCookbook/Photos. Supported desktop browsers: choose a folder to copy future scans. Individual saved images can be downloaded from their recipe.</p><button class="btn" type="button" id="chooseCookbookPhotoFolder">Choose photo folder (browser)</button><p class="inline-note" id="photoFolderStatus"></p>
+    <h3>Make a full backup</h3><button class="btn primary" id="backupBtn" type="button">Download full JSON backup with photos</button>
+    <h3>Restore a backup</h3><p class="inline-note">Restoring REPLACES existing device data. Download your current backup first. Full 0.2.3 backups include photos; older backups without images remain compatible. The built-in 180-item catalog is never changed.</p>
+    <label class="filebtn btn">Choose a JSON file<input id="backupFile" type="file" accept=".json,application/json"></label>
+    <p id="restoreStatus" role="status" class="inline-note"></p><div id="restoreConfirm"></div>`);
+  $("backupBtn").onclick=()=>exportBackup().catch(e=>toast(e.message||"Backup could not be downloaded."));
+  $("chooseCookbookPhotoFolder").onclick=chooseCookbookPhotoDirectory;
+  $("backupFile").onchange=async e=>{
+    const f=e.target.files?.[0];if(!f)return;
+    const status=$("restoreStatus"),box=$("restoreConfirm");box.innerHTML="";
+    if(f.size>PHOTO_BACKUP_MAX_BYTES){status.textContent="Full backup too large (24 MB maximum).";return}
+    try{
+      const obj=JSON.parse(await f.text());if(obj.format!=="reddirtcode-cookbook"||obj.version!==1||!obj.data?.recipes||!obj.data?.favorites||!obj.data?.hidden){throw new Error("This is not a supported Cookbook backup.")}
+      const recCount=Object.keys(obj.data.recipes).length;
+      const images=obj.photos||{};
+      if(!images||typeof images!=="object"||Array.isArray(images))throw new Error("Invalid photo backup section");
+      for(const [id,dataUrl] of Object.entries(images)){
+        if(!photoIdSafe(id)||typeof dataUrl!=="string"||!/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(dataUrl)||dataUrl.length>5_000_000)throw new Error("Invalid image in photo backup");
+      }
+      for(const recipe of Object.values(obj.data.recipes)){
+        for(const id of getPhotoIds(recipe))if(!images[id])throw new Error("Backup references a missing recipe photo");
+      }
+      status.textContent=`Ready to restore ${recCount} written recipes and ${Object.keys(images).length} photos. This will REPLACE the recipes, favorites and shopping list saved on this device.`;
+      const confirm=document.createElement("button");confirm.className="btn primary";confirm.textContent="Replace device data from backup";
+      confirm.onclick=async()=>{
+        confirm.disabled=true;
+        status.textContent="Restoring photos and recipes…";
+        try{
+          for(const [id,dataUrl] of Object.entries(images))await photoPut(id,dataUrl);
+          state.db.importData(obj);
+          for(const [id,dataUrl] of Object.entries(images))savePhotoFolderCopy(id,dataUrl).catch(()=>{});
+          toast("Recipes and photos restored");closeSheet();
+        }catch(x){status.textContent="Restore failed: "+(x.message||"Check the backup");confirm.disabled=false}
+      };
+      box.appendChild(confirm);
+    }catch(x){status.textContent=x.message||"Couldn't read that backup."}
+  };
+}
+
+render();
+
+// ---------- persistent device storage + lossless backup ----------
+function makeDb(){
+  // Keep the original key: upgrades must not reset existing local recipes.
+  const KEY="myCookbook.v1";
+  const names=["favorites","hidden","recipes","shopping"];
+  let data;try{data=JSON.parse(localStorage.getItem(KEY))||{}}catch(_){data={}}
+  if(!data||typeof data!=="object"||Array.isArray(data))data={};
+  const subs={};
+  const snap=name=>({docs:Object.entries(data[name]||{}).map(([id,v])=>({id,data:()=>v}))});
+  const fire=name=>(subs[name]||[]).forEach(fn=>fn(snap(name)));
+  const commit=fn=>{
+    const before=JSON.stringify(data);
+    fn();
+    try{localStorage.setItem(KEY,JSON.stringify(data))}
+    catch(e){data=JSON.parse(before);throw e}
+  };
+  const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,10);
+  return {
+    exportData(){return {format:"reddirtcode-cookbook",version:1,exportedAt:new Date().toISOString(),data:JSON.parse(JSON.stringify(Object.fromEntries(names.map(n=>[n,data[n]||{}]))))}},
+    importData(payload){
+      if(!payload||payload.format!=="reddirtcode-cookbook"||payload.version!==1||!payload.data||typeof payload.data!=="object")throw new Error("Not a Cookbook backup file.");
+      const clean={};
+      for(const name of names){
+        const group=payload.data[name]||{};
+        if(!group||typeof group!=="object"||Array.isArray(group))throw new Error("Invalid backup collection: "+name);
+        const rows=Object.entries(group);
+        if(rows.length>10000)throw new Error("Backup exceeds supported size.");
+        clean[name]=Object.fromEntries(rows.map(([id,value])=>{
+          if(!id||id.length>150||!value||typeof value!=="object"||Array.isArray(value))throw new Error("Invalid "+name+" item in backup.");
+          return [id,value]
+        }));
+      }
+      commit(()=>{data=clean});names.forEach(fire);
+    },
+    collection(name){return{
+      doc(id){id=id||newId();return{id,
+        async set(v){commit(()=>{(data[name]=data[name]||{})[id]=v});fire(name)},
+        async delete(){commit(()=>{if(data[name])delete data[name][id]});fire(name)}}},
+      onSnapshot(fn){(subs[name]=subs[name]||[]).push(fn);fn(snap(name))}
+    }}
+  };
+}
+
+state.downloads={async save({filename,data}){
+  if(window.CookbookAndroid?.saveBase64){
+    const raw=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(",")[1]);r.onerror=reject;r.readAsDataURL(data)});
+    window.CookbookAndroid.saveBase64(data.type||"application/octet-stream",filename,raw);return;
+  }
+  const a=document.createElement("a");a.href=URL.createObjectURL(data);a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}};
+(()=>{
+  const db=makeDb();state.db=db;
+  db.collection("favorites").onSnapshot(s=>{state.favs=new Set(s.docs.map(d=>d.id));render()});
+  db.collection("hidden").onSnapshot(s=>{state.hidden=new Set(s.docs.map(d=>d.id));if(!state.hidden.size&&state.showDel){state.showDel=false;$("showDel").checked=false}render()});
+  db.collection("recipes").onSnapshot(s=>{state.added=s.docs.map(d=>({id:d.id,...d.data()}));render()});
+  db.collection("shopping").onSnapshot(s=>{state.shopping=s.docs.map(d=>({id:d.id,...d.data()}));$("shopCount").textContent=state.shopping.filter(x=>!x.checked).length?`(${state.shopping.filter(x=>!x.checked).length})`:"";if(!$("sheet").hidden&&$("shoppingPanel"))showShopping()});
+})();
+</script>
+
+</body></html>

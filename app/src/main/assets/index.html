@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#9E3B1B">
 <meta name="description" content="My Cookbook — a private recipe collection with photo scanning from Red Dirt Code.">
-<title>My Cookbook Alpha 0.2.3 · Red Dirt Code</title>
+<title>My Cookbook Alpha 0.2.5 · Red Dirt Code</title>
 <style>
 :root{color-scheme:light;--bg:#f7f4ef;--paper:#fffdf9;--ink:#2b302c;--muted:#676e67;--line:#d7d9d2;--chip:#f0ece4;--accent:#9E3B1B;--accent-ink:#fff;--star:#c18a15;--shade:rgba(18,25,19,.56);--mono:ui-monospace,SFMono-Regular,Consolas,monospace;--display:Georgia,'Times New Roman',serif;--tab-A:#607e3c;--tab-S:#b26a1e;--tab-M:#2f5e6e;--tab-D:#9c3d5a;--tab-K:#6a4e8c}
 *{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;color:var(--ink);background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.47}
@@ -143,7 +143,7 @@ footer{margin-top:40px;color:var(--muted);font-size:.85rem;max-width:70ch}
   <main id="list"></main>
 
   <footer>
-    <strong>My Cookbook · Alpha 0.2.1 · Red Dirt Code™</strong> — The built-in index contains 180 items from recipe emails dated Feb 16 to Nov 5, 2026. Recipe text, favorites, and shopping lists are saved <strong>on this device only</strong>. They do not automatically sync to Gmail or another device. Use Backup / Restore to make a copy before reinstalling, clearing app data, or changing phones. For full ingredients or steps, use "Find on" and "Add full recipe".
+    <strong>My Cookbook · Alpha 0.2.5 · Red Dirt Code™</strong> — The built-in index contains 180 items from recipe emails dated Feb 16 to Nov 5, 2026. Recipe text, favorites, and shopping lists are saved <strong>on this device only</strong>. They do not automatically sync to Gmail or another device. Use Backup / Restore to make a copy before reinstalling, clearing app data, or changing phones. For full ingredients or steps, use "Find on" and "Add full recipe".
   </footer>
 </div>
 
@@ -703,6 +703,24 @@ function loadTesseract(){
 function cleanScanLines(text){
   return String(text||"").replace(/\r/g,"").split("\n").map(x=>x.replace(/[\u2022\u00b7]/g," ").replace(/\s+/g," ").trim()).filter(Boolean);
 }
+// Recipe cards often have NO printed "Ingredients" or "Directions" labels.
+// Recognize clear quantity lines and cooking verbs rather than dumping the
+// complete scan into Notes. Ambiguous lines stay editable in Notes.
+const RECIPE_ACTION=/^(?:preheat|mix|stir|combine|place|put|bake|roast|cook|simmer|heat|pour|add|bring|remove|let|serve|fold|boil|chill|beat|sprinkle|arrange|transfer|drain|marinate|spread|season|turn|brown|blend|brush|reduce|slice|cut|cover|whisk|grease|saute|saut[eé]|refrigerate|set|flip|top|roll|knead|divide|line|fill|spoon|strain|peel|chop|mince|melt|wash|rinse|coat|baste|scrape|allow|rest|reserve|repeat|place)\b/i;
+function looksLikeDirection(line){
+  const unnumbered=String(line).replace(/^(?:step\s*)?\d{1,2}[.)]\s+(?=[A-Za-z])/,"").trim();
+  return RECIPE_ACTION.test(unnumbered);
+}
+function looksLikeIngredient(line){
+  const s=String(line).trim().replace(/^[-*]\s*/,"");
+  if(looksLikeDirection(s)||/^(?:step\s*)?\d{1,2}[.)]\s+[A-Za-z]/i.test(s))return false;
+  const qty=s.match(/^(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?|[¼½¾⅓⅔⅛⅜⅝⅞])(?:\s*[-–]\s*(?:\d+\s+\d+\/\d+|\d+\/\d+|\d+(?:[.,]\d+)?))?/);
+  if(!qty)return false;
+  const tail=s.slice(qty[0].length).trim();
+  if(!tail||/^[°%:()\d]/.test(tail)||/^[.)]\s+[A-Za-z]/.test(tail))return false;
+  if(/^(?:seconds?|secs?|minutes?|mins?|hours?|hrs?|degrees?|°[CF])\b/i.test(tail))return false;
+  return /^[A-Za-z(]/.test(tail);
+}
 function recipeFromScan(text,opts={}){
   const base=opts.ref?BASE.find(x=>x.key===opts.ref):null;
   const lines=cleanScanLines(text);
@@ -710,30 +728,35 @@ function recipeFromScan(text,opts={}){
   const steps=/^(directions?|instructions?|method|preparation|procedure|steps?|how to make it)\s*[:.\-]?\s*$/i;
   const extras=/^(notes?|tips?|nutrition|yield|serves|recipe by)\s*[:.\-]?\s*$/i;
   let section="heading",title="",ingredients=[],directions=[],notes=[];
-  const before=[];
   let foundIngredientHeading=false,foundStepsHeading=false;
-  for(const line of lines){
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
     if(ing.test(line)){section="ingredients";foundIngredientHeading=true;continue}
     if(steps.test(line)){section="steps";foundStepsHeading=true;continue}
     if(extras.test(line)){section="notes";continue}
-    if(section==="ingredients")ingredients.push(line);
-    else if(section==="steps")directions.push(line);
-    else if(section==="notes")notes.push(line);
-    else before.push(line);
+    if(section==="notes"){notes.push(line);continue}
+    // Explicit headings take priority, but detect a missing Directions heading.
+    // This is common for handwritten cards with ingredients followed by prose.
+    if(section==="ingredients"&&looksLikeDirection(line)){section="steps";directions.push(line);continue}
+    if(section==="ingredients"){ingredients.push(line);continue}
+    if(section==="steps"){
+      if(looksLikeIngredient(line)&&!foundIngredientHeading){ingredients.push(line);continue}
+      directions.push(line);continue;
+    }
+    if(looksLikeIngredient(line)){section="ingredients";ingredients.push(line);continue}
+    if(looksLikeDirection(line)){section="steps";directions.push(line);continue}
+    if(!title&&!base&&i===0&&!/^recipe\s*(?:card|#\d+)?$/i.test(line)){title=line;continue}
+    if(/^\s*(?:and|then|until|for|over|with|in|on|at)\b/i.test(line)&&directions.length){
+      directions[directions.length-1]+=" "+line;continue;
+    }
+    notes.push(line); // Never discard OCR text we cannot confidently categorize.
   }
-  title=before.find(x=>!/^recipe\s*(?:card|#\d+)?$/i.test(x))||"";
   if(base)title=base.title;
-  // No clear heading? Avoid inventing ingredients and instructions.
-  // The unclassified text stays in Notes for manual sorting.
-  const unclassified=before.filter(x=>x!==title);
-  if(!foundIngredientHeading&&!foundStepsHeading){
-    ingredients=[];directions=[];
-    notes=[...lines.filter(x=>!base||x!==base.title)];
-    if(!base&&title&&notes[0]===title)notes.shift();
-  }else{
-    notes=[...unclassified,...notes];
-  }
-  return {title,sec:base?.sec||"M",ingredients,directions,notes,foundIngredientHeading,foundStepsHeading};
+  // Highlight possible OCR errors WITHOUT silently editing recipe measurements.
+  // E.g. "3 1/2-44 lb" should be reviewed against the actual card/photo.
+  const warnings=ingredients.filter(x=>/\b\d+\s+\d+\/\d+\s*[-–]\s*\d{2,}\s*(?:lb|lbs|pounds?|oz|kg)\b/i.test(x));
+  return {title,sec:base?.sec||"M",ingredients,directions,notes,
+    foundIngredientHeading,foundStepsHeading,warnings};
 }
 // Scoped public callback: invoked only by the local, bundled Android bridge.
 window.CookbookRecipeScan={
@@ -856,10 +879,15 @@ function showScan(opts={}){
     const raw=$("scanRaw").value.trim();if(!raw)return;
     const parsed=recipeFromScan(raw,opts);
     const notes=parsed.notes.join("\n");
+    const reviewSummary=`Auto-filled ${parsed.ingredients.length} ingredient(s) and ${parsed.directions.length} step(s).`+
+      (!parsed.title?" Enter the recipe name.":"")+
+      (parsed.notes.length?` ${parsed.notes.length} uncertain line(s) are in Notes.`:"")+
+      (parsed.warnings.length?` Possible OCR amount error: ${parsed.warnings.join("; ")}.`:"")+
+      " Compare all measurements, temperatures and instructions with the original photo before saving.";
     showForm({ref:opts.ref,pre:{title:parsed.title,sec:parsed.sec,
       ingredients:parsed.ingredients,steps:parsed.directions,
       notes,source:"Scanned recipe photo"},photoStaging:[...activeRecipeScan.photos],
-      banner:"Photo text imported. Review the name, ingredient quantities, directions and temperatures before saving. If headings weren't recognized, unclassified text is in Notes."});
+      ocrText:raw,banner:reviewSummary});
   };
 }
 
@@ -891,6 +919,7 @@ function showForm(opts){
   openSheet(`<button class="btn close" type="button" data-close>Close</button>
     <h2 id="sheetTitle">${opts.rec?"Edit recipe":opts.pre?"Check and save":base?"Add the full recipe":"Add a recipe"}</h2>
     ${opts.banner?`<p class="banner">${esc(opts.banner)}</p>`:""}
+    ${opts.ocrText?`<details style="margin:12px 0"><summary>Review original recognized text</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;padding:12px;background:var(--chip);border-radius:8px">${esc(opts.ocrText)}</pre></details>`:""}
     ${base&&!opts.pre&&!opts.rec?`<p class="teaser">Find this recipe on the recipe site, then paste its link or copy the ingredients and steps here.</p>`:""}
     <form class="form" id="recForm" novalidate>
       <label for="f-title">Recipe name<input id="f-title" required value="${esc(title)}"></label>

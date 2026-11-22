@@ -57,3 +57,17 @@ This update builds on the user's Alpha 0.2.2 photo-scanning app. The original up
 Install Android Studio with Android SDK 36 and JDK 17, open the repository root, sync Gradle, then select **Build → Build APK(s)**. On success, the debug APK is `app/build/outputs/apk/debug/app-debug.apk`. Alternatively, copy this project into the GitHub repository and run the provided Actions workflow. Neither path was executed in this environment.
 
 **Before installing on an existing device:** export the current cookbook's JSON backup. The same Android application ID is retained, but HTML/browser installations and APK installations do not automatically share data.
+
+
+## Alpha 0.2.5: OCR auto-fill field mapping (Samsung regression)
+
+- Fixes the actual issue where a recipe card **without explicit Ingredients and Directions headings** sent its measurements and instructions to Notes.
+- Recognizes clear quantity-prefixed ingredient lines and common cooking instruction verbs even without headings.
+- When Directions isn't printed, recognizes steps beginning with cooking actions after ingredient lines.
+- Preserves unclassified text in Notes for review, rather than inventing information.
+- Shows the recognized text alongside the editable form and counts mapped ingredients/steps.
+- Flags suspicious OCR quantities such as `3 1/2-44 lb` for human review; **does not guess corrections**.
+- Maintains the Concept 2 launcher artwork and Android app ID for in-place upgrades.
+- Test against the original photographed card: OCR accuracy and actual on-device auto-fill still require physical Samsung verification. Export a full JSON backup before upgrading.
+
+Browser source: `my-cookbook-alpha-0.2.5.html`, bundled Android asset: `app/src/main/assets/index.html`.

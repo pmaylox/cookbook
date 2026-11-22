@@ -3,7 +3,7 @@ import re
 from PIL import Image,ImageDraw
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
-FILE=ROOT/'my-cookbook-alpha-0.2.3.html'
+FILE=ROOT/'my-cookbook-alpha-0.2.5.html'
 PHOTO=ROOT/'tests'/'test-recipe-card.png'
 img=Image.new('RGB',(1100,850),'white')
 d=ImageDraw.Draw(img)
@@ -56,9 +56,58 @@ with sync_playwright() as pw:
     pg.locator('#scanRaw').fill('Grandma Pie\n2 apples\nBake for 30 minutes')
     pg.locator('#scanToForm').click()
     assert pg.locator('#f-title').input_value()=='Grandma Pie'
-    assert pg.locator('#f-ing').input_value()==''
-    assert '2 apples' in pg.locator('#f-notes').input_value()
-    passed.append('unstructured scans retain uncertain text in notes, not fabricated ingredient fields')
+    assert pg.locator('#f-ing').input_value()=='2 apples'
+    assert pg.locator('#f-steps').input_value()=='Bake for 30 minutes'
+    assert pg.locator('#f-notes').input_value()==''
+    passed.append('unheaded recipe cards correctly auto-fill ingredients and steps')
+    assert 'Auto-filled 1 ingredient(s) and 1 step(s)' in pg.locator('.banner').first.inner_text()
+    assert 'Grandma Pie' in pg.locator('details pre').text_content()
+    passed.append('scan preview reports mapped fields and retains original OCR for review')
+    pg.locator('[data-close]').first.click()
+
+    # Regression based on the pork-loin photo OCR reported on Samsung:
+    # 0.2.4 put every line in Notes when OCR headings were missing.
+    pg.locator('#addBtn').click()
+    pg.get_by_role('button',name='Scan a recipe photo').click()
+    pg.locator('#scanRaw').fill('Pork Loin\n1T. flour\n1 t. salt\n1 t. dry mustard\n1/4 t. pepper\n3 1/2-44 lb. pork loin\n1 lb. can applesauce\n1/4 C, brown sugar\n1/4 t. cinnamon\nPreheat the oven to 350°F.\nPlace fat side up in the roasting pan.\nPour applesauce over roast.')
+    pg.locator('#scanToForm').click()
+    ingredients=pg.locator('#f-ing').input_value().splitlines()
+    steps=pg.locator('#f-steps').input_value().splitlines()
+    assert len(ingredients)==8,ingredients
+    assert ingredients[0]=='1T. flour'
+    assert ingredients[4]=='3 1/2-44 lb. pork loin' # preserve uncertainty rather than silently altering it
+    assert len(steps)==3,steps
+    assert pg.locator('#f-notes').input_value()==''
+    assert 'Possible OCR amount error' in pg.locator('.banner').first.inner_text()
+    passed.append('Samsung pork-loin OCR fills 8 ingredients and 3 cooking steps, preserving questionable amount for review')
+    pg.locator('[data-close]').first.click()
+
+    pg.locator('#addBtn').click()
+    pg.get_by_role('button',name='Scan a recipe photo').click()
+    pg.locator('#scanRaw').fill('1 cup flour\n2 eggs\nMix ingredients thoroughly')
+    pg.locator('#scanToForm').click()
+    assert pg.locator('#f-title').input_value()==''
+    assert pg.locator('#f-ing').input_value()=='1 cup flour\n2 eggs'
+    assert 'Enter the recipe name' in pg.locator('.banner').first.inner_text()
+    passed.append('ingredient-first scan does not mistake the first quantity for recipe title')
+    pg.locator('[data-close]').first.click()
+
+    pg.locator('#addBtn').click()
+    pg.get_by_role('button',name='Scan a recipe photo').click()
+    pg.locator('#scanRaw').fill('Bread\nIngredients\n2 cups flour\n1 tsp yeast\nBake for 20 minutes\nNotes\nUse a warm kitchen')
+    pg.locator('#scanToForm').click()
+    assert pg.locator('#f-ing').input_value()=='2 cups flour\n1 tsp yeast'
+    assert pg.locator('#f-steps').input_value()=='Bake for 20 minutes'
+    assert pg.locator('#f-notes').input_value()=='Use a warm kitchen'
+    passed.append('recognizes cooking directions when the Directions heading is missing')
+    pg.locator('[data-close]').first.click()
+
+    pg.locator('#addBtn').click()
+    pg.get_by_role('button',name='Scan a recipe photo').click()
+    pg.locator('#scanRaw').fill('Grandma Pie\nFamily secret note\n2 apples\nBake for 30 minutes')
+    pg.locator('#scanToForm').click()
+    assert pg.locator('#f-notes').input_value()=='Family secret note'
+    passed.append('uncertain recipe text stays in Notes rather than being guessed')
     pg.locator('[data-close]').first.click()
     # Android bridge simulation: image processed in native bridge, not browser OCR.
     pg.evaluate('''window.CookbookAndroid={scanImageBase64:(id,encoded)=>{

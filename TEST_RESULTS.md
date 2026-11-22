@@ -42,3 +42,15 @@ The Concept 2 launcher icon resources are included in this revision. The recipe 
 - [ ] Check app icon on Samsung launcher, app drawer, Settings → Apps, and recent tasks.
 - [ ] Confirm adaptive circle/squircle cropping doesn't cut the book title or braces.
 - [ ] Confirm camera scan, saved photos, and JSON export continue to function.
+
+
+## Alpha 0.2.5: scan-field mapping regression
+
+Browser tests now cover screenshot-style unheaded pork-loin cards (8 ingredients, 3 steps),
+unheaded ingredients and cooking verbs, ambiguous lines, missing Directions headings,
+recipe title detection, and review warnings. Tests simulate native OCR output in the
+web interface; they **do not** verify ML Kit accuracy on the Samsung device.
+
+Phone retest: scan the original pork-loin recipe again, confirm ingredient/steps
+placement, manually check the weight (OCR read `3 1/2-44 lb`), then save.
+Never uninstall or clear app storage before exporting a full JSON backup.

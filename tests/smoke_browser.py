@@ -4,7 +4,7 @@ import functools, threading, json, tempfile
 from http.server import ThreadingHTTPServer,SimpleHTTPRequestHandler
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
-FILE=ROOT/'my-cookbook-alpha-0.2.3.html'
+FILE=ROOT/'my-cookbook-alpha-0.2.5.html'
 assert FILE.exists()
 server=ThreadingHTTPServer(('127.0.0.1',0),functools.partial(SimpleHTTPRequestHandler,directory=str(ROOT)))
 threading.Thread(target=server.serve_forever,daemon=True).start()
