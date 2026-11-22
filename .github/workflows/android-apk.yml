@@ -28,8 +28,10 @@ jobs:
       - name: Install Android SDK platform
         run: |
           echo "ANDROID_HOME=${ANDROID_HOME}"
-          sdkmanager --licenses < /dev/null >/dev/null 2>&1 || true
-          sdkmanager --install 'platforms;android-36' 'build-tools;36.0.0'
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)
+          test -n "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" --install 'platforms;android-36' 'build-tools;36.0.0'
       - name: Compile debug APK
         run: gradle --no-daemon :app:assembleDebug
       - uses: actions/upload-artifact@v4
