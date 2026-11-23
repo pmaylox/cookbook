@@ -71,3 +71,13 @@ Install Android Studio with Android SDK 36 and JDK 17, open the repository root,
 - Test against the original photographed card: OCR accuracy and actual on-device auto-fill still require physical Samsung verification. Export a full JSON backup before upgrading.
 
 Browser source: `my-cookbook-alpha-0.2.5.html`, bundled Android asset: `app/src/main/assets/index.html`.
+
+## Alpha 0.2.6: Import a recipe from its website link
+
+- **Enter Link → Auto-fill from link** requests the public HTTPS recipe page and reads schema.org Recipe JSON-LD metadata to populate title, ingredients, ordered cooking steps, servings and preparation/cooking time when provided.
+- The original website URL stays in **Source**. Every imported recipe opens in the editable review form before Save; users should verify measurements and temperatures.
+- Android fetches only on explicit user action through a restricted native HTTPS downloader. The remote site is never loaded or executed inside the local app WebView. The app now needs Android INTERNET permission for link import.
+- A site may reject automated requests or omit standardized recipe data. In that case the app says why and offers **Continue without import**, preserving the link for manual entry. The standalone browser copy works only when the site permits CORS, while Android uses its networking bridge.
+- The existing database, JSON backup schema, photo scanning and attached recipe photos remain unchanged; app ID is retained for in-place upgrades.
+- Test fixture coverage is in tests/link_import_node_test.cjs. **Android compilation and real website / phone testing still need to be confirmed.** Export a full backup before installing a new APK.
+- VersionCode 206, versionName 0.2.6-alpha.
