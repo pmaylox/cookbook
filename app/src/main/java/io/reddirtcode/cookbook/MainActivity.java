@@ -45,8 +45,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * Offline-first Android container for the shipped, trusted Cookbook HTML.
  * Not a remotely hosted web app. External URLs are sent to the user's browser.
- * The only exposed bridge methods are document export, external URL launching,
- * and a native Print / Save-as-PDF dialog.
+ * External recipe pages are fetched on demand, but never loaded or executed
+ * inside the trusted WebView. Bridge methods also support OCR, export and printing.
  */
 public final class MainActivity extends Activity {
     private static final int CHOOSE_JSON = 101;
@@ -60,6 +60,8 @@ public final class MainActivity extends Activity {
     private byte[] pendingDocument;
     private Uri cameraPhotoUri;
     private final java.util.concurrent.ExecutorService imageWorker =
+            java.util.concurrent.Executors.newSingleThreadExecutor();
+    private final java.util.concurrent.ExecutorService recipeWorker =
             java.util.concurrent.Executors.newSingleThreadExecutor();
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -149,6 +151,24 @@ public final class MainActivity extends Activity {
     private final class CookbookBridge {
         @JavascriptInterface public void openExternal(String url) {
             runOnUiThread(() -> openBrowser(url));
+        }
+
+        @JavascriptInterface public void fetchRecipeSchema(String requestId, String rawUrl) {
+            if (requestId == null || !requestId.matches("link-[0-9]{1,15}")) return;
+            if (rawUrl == null || rawUrl.length() > 2048) {
+                reportRecipeLink(requestId, new JSONArray(), "The recipe link is too long.");
+                return;
+            }
+            recipeWorker.execute(() -> {
+                try {
+                    JSONArray schemas = downloadRecipeSchema(rawUrl.trim());
+                    reportRecipeLink(requestId, schemas,
+                            schemas.length() == 0 ? "This website did not expose readable recipe data. You can save the link and add ingredients manually." : "");
+                } catch (Exception ex) {
+                    reportRecipeLink(requestId, new JSONArray(),
+                            "The website could not be read. Check the link or connection. Some recipe sites block automated requests; you can still save the link manually.");
+                }
+            });
         }
         @JavascriptInterface public void saveBase64(String mime, String filename, String base64) {
             if (base64 == null || base64.length() > 40_000_000) {
@@ -273,6 +293,98 @@ public final class MainActivity extends Activity {
         }
     }
 
+
+    // On-demand metadata download. The app never evaluates the remote page's JS
+    // or loads it in the trusted WebView. Only recipe JSON-LD script text crosses
+    // the bridge back into the bundled parser.
+    private static void validateRecipeUrl(java.net.URL url) throws java.io.IOException {
+        if (!"https".equalsIgnoreCase(url.getProtocol()) || url.getUserInfo() != null)
+            throw new java.io.IOException("Only secure HTTPS recipe links are supported");
+        String host = url.getHost();
+        if (host == null || !host.contains(".") || host.endsWith(".local")
+                || host.endsWith(".internal") || host.endsWith(".localhost")
+                || host.equalsIgnoreCase("localhost") || host.contains(":")
+                || host.matches("[0-9.]+"))
+            throw new java.io.IOException("Recipe website is not public");
+        // Disallow loopback, link-local, and private-network destinations.
+        for (java.net.InetAddress address : java.net.InetAddress.getAllByName(host)) {
+            if (address.isAnyLocalAddress() || address.isLoopbackAddress()
+                    || address.isLinkLocalAddress() || address.isSiteLocalAddress()
+                    || address.isMulticastAddress())
+                throw new java.io.IOException("Recipe website resolves to a local address");
+        }
+    }
+
+    private static JSONArray downloadRecipeSchema(String rawUrl) throws java.io.IOException {
+        java.net.URL current = new java.net.URL(rawUrl);
+        for (int redirect = 0; redirect <= 4; redirect++) {
+            validateRecipeUrl(current);
+            java.net.HttpURLConnection connection =
+                    (java.net.HttpURLConnection) current.openConnection();
+            try {
+                connection.setInstanceFollowRedirects(false);
+                connection.setConnectTimeout(9000);
+                connection.setReadTimeout(12000);
+                connection.setRequestProperty("User-Agent",
+                        "Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36");
+                connection.setRequestProperty("Accept", "text/html,application/xhtml+xml");
+                int status = connection.getResponseCode();
+                if (status == 301 || status == 302 || status == 303 || status == 307 || status == 308) {
+                    String location = connection.getHeaderField("Location");
+                    if (location == null || location.isEmpty())
+                        throw new java.io.IOException("Redirect missing location");
+                    current = new java.net.URL(current, location);
+                    continue;
+                }
+                if (status < 200 || status >= 300)
+                    throw new java.io.IOException("Website response " + status);
+                String mime = connection.getContentType();
+                if (mime != null && !mime.toLowerCase(java.util.Locale.ROOT).contains("html"))
+                    throw new java.io.IOException("Not a recipe webpage");
+                java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+                try (java.io.InputStream in = connection.getInputStream()) {
+                    byte[] buffer = new byte[8192];
+                    int n;
+                    while ((n = in.read(buffer)) != -1) {
+                        if (bytes.size() + n > 3_000_000)
+                            throw new java.io.IOException("Recipe webpage is too large");
+                        bytes.write(buffer, 0, n);
+                    }
+                }
+                String html = new String(bytes.toByteArray(), java.nio.charset.StandardCharsets.UTF_8);
+                JSONArray scripts = new JSONArray();
+                java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(
+                        "<script\\b([^>]*)>([\\s\\S]*?)</script\\s*>",
+                        java.util.regex.Pattern.CASE_INSENSITIVE).matcher(html);
+                int totalLength = 0;
+                while (matcher.find() && scripts.length() < 40) {
+                    String attributes = matcher.group(1).toLowerCase(java.util.Locale.ROOT);
+                    if (!attributes.matches("(?s).*\\btype\\s*=\\s*['\\\"]?application/ld\\+json.*"))
+                        continue;
+                    String body = matcher.group(2).trim();
+                    if (body.isEmpty() || !(body.startsWith("{") || body.startsWith("[")))
+                        continue;
+                    if (body.length() + totalLength > 900_000) break;
+                    scripts.put(body);
+                    totalLength += body.length();
+                }
+                return scripts;
+            } finally {
+                connection.disconnect();
+            }
+        }
+        throw new java.io.IOException("Too many redirects");
+    }
+
+    private void reportRecipeLink(String requestId, JSONArray scripts, String error) {
+        String script = "window.CookbookRecipeImport && window.CookbookRecipeImport.receive("
+                + JSONObject.quote(requestId) + "," + JSONObject.quote(scripts.toString()) + ","
+                + JSONObject.quote(error) + ")";
+        runOnUiThread(() -> {
+            if (cookbookView != null) cookbookView.evaluateJavascript(script, null);
+        });
+    }
+
     private void reportPhotoCopy(String photoId, boolean success, String message) {
         String script = "window.CookbookPhotoStorage && window.CookbookPhotoStorage.photoCopyResult("
             + JSONObject.quote(photoId) + "," + success + "," + JSONObject.quote(message) + ")";
@@ -388,6 +500,7 @@ public final class MainActivity extends Activity {
     }
     @Override protected void onDestroy() {
         imageWorker.shutdownNow();
+        recipeWorker.shutdownNow();
         if (printView != null) { printView.destroy(); printView = null; }
         if (cookbookView != null) { cookbookView.destroy(); cookbookView = null; }
         super.onDestroy();
