@@ -54,3 +54,10 @@ web interface; they **do not** verify ML Kit accuracy on the Samsung device.
 Phone retest: scan the original pork-loin recipe again, confirm ingredient/steps
 placement, manually check the weight (OCR read `3 1/2-44 lb`), then save.
 Never uninstall or clear app storage before exporting a full JSON backup.
+
+## Alpha 0.2.6 — recipe link import regression plan
+
+- Added tests/link_import_node_test.cjs covering Recipe JSON-LD, @graph nesting, step order, serving/time fields, HTML instructions, missing data, Android callback, website errors, cancellation and synchronized browser/APK assets.
+- Android CI builds are configured to run on pull requests and main push, with the regression test before compilation.
+- Still requires a real Android installation and recipe imports from several public HTTPS recipe sites. Some sites will block automatic imports and should show the manual fallback rather than silently saving blank fields.
+- Verify the imported ingredients and steps are editable and appear on the saved recipe; existing photo OCR and backups should not regress.
