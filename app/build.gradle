@@ -10,8 +10,8 @@ android {
         applicationId 'io.reddirtcode.cookbook'
         minSdk 26
         targetSdk 35
-        versionCode 205
-        versionName '0.2.5-alpha'
+        versionCode 206
+        versionName '0.2.6-alpha'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

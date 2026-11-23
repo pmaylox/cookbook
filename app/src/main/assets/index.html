@@ -143,7 +143,7 @@ footer{margin-top:40px;color:var(--muted);font-size:.85rem;max-width:70ch}
   <main id="list"></main>
 
   <footer>
-    <strong>My Cookbook · Alpha 0.2.5 · Red Dirt Code™</strong> — The built-in index contains 180 items from recipe emails dated Feb 16 to Nov 5, 2026. Recipe text, favorites, and shopping lists are saved <strong>on this device only</strong>. They do not automatically sync to Gmail or another device. Use Backup / Restore to make a copy before reinstalling, clearing app data, or changing phones. For full ingredients or steps, use "Find on" and "Add full recipe".
+    <strong>My Cookbook · Alpha 0.2.6 · Red Dirt Code™</strong> — The built-in index contains 180 items from recipe emails dated Feb 16 to Nov 5, 2026. Recipe text, favorites, and shopping lists are saved <strong>on this device only</strong>. They do not automatically sync to Gmail or another device. Use Backup / Restore to make a copy before reinstalling, clearing app data, or changing phones. For full ingredients or steps, use "Find on" and "Add full recipe".
   </footer>
 </div>
 
@@ -151,6 +151,8 @@ footer{margin-top:40px;color:var(--muted);font-size:.85rem;max-width:70ch}
 <aside class="sheet" id="sheet" hidden aria-modal="true" role="dialog" aria-labelledby="sheetTitle"></aside>
 <div class="toast" id="toast" hidden role="status"></div>
 
+<!-- Recipe link importer shared by web and Android. -->
+<script src="recipe-link-import.js"></script>
 <!-- Native Android print is handled by MainActivity. -->
 <script>
 // Recipe emails from Phil's Gmail archive (Feb 16 – Nov 5, 2026), deduplicated.
@@ -494,7 +496,7 @@ function render(){
 // ---------- sheet ----------
 let lastFocus=null;
 function openSheet(html){lastFocus=document.activeElement;$("sheet").innerHTML=html;$("sheet").hidden=false;$("shade").hidden=false;const f=$("sheet").querySelector("input,textarea,button");f&&f.focus()}
-function closeSheet(){$("sheet").hidden=true;$("shade").hidden=true;$("sheet").innerHTML="";lastFocus&&lastFocus.focus&&lastFocus.focus()}
+function closeSheet(){CookbookRecipeLinkImport.cancel();$("sheet").hidden=true;$("shade").hidden=true;$("sheet").innerHTML="";lastFocus&&lastFocus.focus&&lastFocus.focus()}
 $("shade").onclick=closeSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("sheet").hidden)closeSheet()});
 
@@ -576,7 +578,7 @@ function showChooser(opts){
     <div class="choices">
       <button class="choice" type="button" data-mode="manual"><span class="ic">Aa</span><b>Type it in</b><span class="d">Fill in the name, ingredients and steps yourself.</span></button>
       <button class="choice" type="button" data-mode="scan"><span class="ic">📷</span><b>Scan a recipe photo</b><span class="d">Use your camera or a saved photo. Read the text, check it, and fill the recipe form.</span></button>
-      <button class="choice" type="button" data-mode="link"><span class="ic">www</span><b>Save a link</b><span class="d">Save the recipe's web address, then type in what you want to keep.</span></button>
+      <button class="choice" type="button" data-mode="link"><span class="ic">www</span><b>Save a link</b><span class="d">Auto-fill ingredients and cooking steps from supported recipe websites.</span></button>
     </div>`);
   $("sheet").querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
     if(b.dataset.mode==="manual")showForm({ref:opts.ref});
@@ -895,18 +897,50 @@ function renderWebHint(){const box=$("webhint");box.hidden=true;box.innerHTML=""
 
 function showLink(opts){
   openSheet(`<button class="btn close" type="button" data-close>Close</button>
-    <h2 id="sheetTitle">Save a link</h2>
+    <h2 id="sheetTitle">Import a recipe link</h2>
+    <p class="teaser">Paste a recipe webpage address. Cookbook will try to fill the ingredients and directions; check everything before saving.</p>
     <form class="form" id="linkForm" novalidate>
       <label for="l-url">Recipe link<input id="l-url" type="url" inputmode="url" placeholder="https://sallysbakingaddiction.com/..."></label>
       <p class="err" id="l-err" hidden></p>
-      <div class="row"><button class="btn primary" type="submit" id="l-plain">Continue</button></div>
+      <p id="l-status" role="status" aria-live="polite" class="inline-note">Recipe import needs an internet connection. Some websites block automated access.</p>
+      <div class="row">
+        <button class="btn primary" type="submit" id="l-import">Auto-fill from link</button>
+        <button class="btn" type="button" id="l-manual">Continue without import</button>
+      </div>
     </form>`);
   const url=()=>$("l-url").value.trim();
   const err=t=>{$("l-err").textContent=t;$("l-err").hidden=!t};
-  $("linkForm").onsubmit=e=>{e.preventDefault();err("");const u=url();
-    if(!/^https?:\/\/\S+\.\S+/.test(u)){err("Enter the full web address, starting with https://");return}
-    let t="";try{t=decodeURIComponent(new URL(u).pathname.split("/").filter(s=>s&&!/^\d+$/.test(s)).pop()||"").replace(/-recipe.*$|-\d+$/g,"").replace(/[-_]+/g," ").replace(/\b\w/g,c=>c.toUpperCase())}catch(_){}
-    showForm({ref:opts.ref,pre:{title:t,source:u},banner:"Check the name. You can add ingredients and steps now or later."})};
+  const valid=()=>{
+    const u=url();
+    try{const parsed=new URL(u);if(!["http:","https:"].includes(parsed.protocol)||!parsed.hostname.includes("."))throw Error("invalid");return u}
+    catch(_){err("Enter a full website address, starting with https://");return ""}
+  };
+  const fallbackTitle=u=>{
+    try{return decodeURIComponent(new URL(u).pathname.split("/").filter(s=>s&&!/^\d+$/.test(s)).pop()||"")
+      .replace(/-recipe.*$|-\d+$/g,"").replace(/[-_]+/g," ").replace(/\b\w/g,c=>c.toUpperCase())}
+    catch(_){return ""}
+  };
+  const manual=()=>{
+    err("");const u=valid();if(!u)return;
+    CookbookRecipeLinkImport.cancel();
+    showForm({ref:opts.ref,pre:{title:fallbackTitle(u),source:u},banner:"The source link is saved. Enter any missing ingredients and cooking steps before saving."});
+  };
+  $("l-manual").onclick=manual;
+  $("linkForm").onsubmit=e=>{
+    e.preventDefault();err("");const u=valid();if(!u)return;
+    $("l-import").disabled=true;
+    $("l-status").textContent="Reading the recipe website…";
+    CookbookRecipeLinkImport.importUrl(u,parsed=>{
+      if(!$("linkForm"))return;
+      showForm({ref:opts.ref,pre:{...parsed,title:parsed.title||fallbackTitle(u),source:u},
+        banner:"Imported "+parsed.ingredients.length+" ingredient(s) and "+parsed.steps.length+
+          " cooking step(s). Verify quantities, temperatures and instructions against the original website before saving."});
+    },message=>{
+      if(!$("linkForm"))return;
+      $("l-status").textContent=message;
+      $("l-import").disabled=false;
+    });
+  };
   if(opts.url)$("l-url").value=opts.url;
 }
 

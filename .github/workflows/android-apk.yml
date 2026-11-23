@@ -2,6 +2,14 @@ name: My Cookbook Android APK
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'app/**'
+      - 'recipe-link-import.js'
+      - 'my-cookbook-alpha-0.2.5.html'
+      - 'tests/link_import_node_test.cjs'
+      - '.github/workflows/android-apk.yml'
   push:
     branches: [ main ]
     paths:
@@ -18,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Verify recipe import logic
+        run: node tests/link_import_node_test.cjs
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -36,6 +46,6 @@ jobs:
         run: gradle --no-daemon :app:assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: MyCookbook-Alpha-0.2.5-debug-apk
+          name: MyCookbook-Alpha-0.2.6-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
